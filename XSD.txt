@@ -1,0 +1,2 @@
+cd C:\Users\Steve\Documents\Visual Studio 2015\Projects\SmallBasic\ExtensionManager
+xsd ExtensionList.xsd /classes /out:"C:\Users\Steve\Documents\Visual Studio 2015\Projects\SmallBasic\ExtensionManager\ExtensionManagerLibrary" /n:ExtensionManagerLibrary.Schema

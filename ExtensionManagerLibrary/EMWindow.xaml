@@ -1,0 +1,17 @@
+﻿<Window x:Class="ExtensionManagerLibrary.EMWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ExtensionManagerLibrary"
+        mc:Ignorable="d"
+        Title="Small Basic Extension Manager" Height="400" Width="600" Closing="Window_Closing" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged" WindowStyle="ThreeDBorderWindow" WindowStartupLocation="CenterScreen" Visibility="Visible">
+    <Grid x:Name="gridMain">
+        <ProgressBar x:Name="progressBar" Height="20" Margin="10,10,10,0" VerticalAlignment="Top"/>
+        <ScrollViewer x:Name="scrollViewer" Margin="0,35,0,0" VerticalScrollBarVisibility="Auto">
+            <Grid x:Name="grid" Margin="0" VerticalAlignment="Top">
+                <Canvas x:Name="canvas" Margin="0"/>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</Window>

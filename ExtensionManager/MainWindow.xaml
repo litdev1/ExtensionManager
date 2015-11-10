@@ -1,0 +1,106 @@
+﻿<Window x:Class="ExtensionManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ExtensionManager"
+        mc:Ignorable="d"
+        Title="Small Basic Extension Manager" Height="600" Width="1200" Icon="AppIcon.ico" Closing="Window_Closing" Loaded="Window_Loaded">
+    <Grid Margin="0,0,3,10.4">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="341*"/>
+            <ColumnDefinition Width="63*"/>
+            <ColumnDefinition Width="78*"/>
+            <ColumnDefinition Width="331*"/>
+        </Grid.ColumnDefinitions>
+        <TabControl x:Name="tabControl" Margin="10,10,9.8,0" Grid.ColumnSpan="4">
+            <TabItem Header="Manage Extensions">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="67*"/>
+                        <ColumnDefinition Width="7*"/>
+                        <ColumnDefinition Width="14*"/>
+                        <ColumnDefinition Width="305*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label x:Name="label" Content="Small Basic Installation Path" HorizontalAlignment="Left" Margin="10,10,0,0" Height="26" VerticalAlignment="Top" Grid.ColumnSpan="3"/>
+                    <TextBox x:Name="textBoxInstallationPath" Height="23" Margin="24.6,14,10.4,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Grid.ColumnSpan="2" Grid.Column="2"/>
+                    <DataGrid x:Name="dataGridExtensions" ItemsSource="{Binding}" AlternatingRowBackground="#FFF0FAFE" AlternationCount="2" Margin="10,88,9,34.4" IsReadOnly="True" Grid.ColumnSpan="4" SelectionUnit="Cell">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Extension Name" Binding="{Binding Name}" CanUserSort="False"/>
+                            <DataGridTextColumn Header="Description" Binding="{Binding Description}" CanUserSort="False"/>
+                            <DataGridHyperlinkColumn Header="WebSite" Binding="{Binding WebSite}" CanUserSort="False">
+                            <DataGridHyperlinkColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <EventSetter Event="Hyperlink.Click" Handler="OnHyperlink" />
+                                </Style>
+                            </DataGridHyperlinkColumn.ElementStyle>
+                            </DataGridHyperlinkColumn>
+                            <DataGridHyperlinkColumn Header="API" Binding="{Binding API}" CanUserSort="False">
+                                <DataGridHyperlinkColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <EventSetter Event="Hyperlink.Click" Handler="OnHyperlink" />
+                                    </Style>
+                                </DataGridHyperlinkColumn.ElementStyle>
+                            </DataGridHyperlinkColumn>
+                            <DataGridHyperlinkColumn Header="Change Log" Binding="{Binding ChangeLog}" CanUserSort="False">
+                                <DataGridHyperlinkColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <EventSetter Event="Hyperlink.Click" Handler="OnHyperlink" />
+                                    </Style>
+                                </DataGridHyperlinkColumn.ElementStyle>
+                            </DataGridHyperlinkColumn>
+                            <DataGridTextColumn Header="Small Basic Version" Binding="{Binding SBVersion}" CanUserSort="False"/>
+                            <DataGridTextColumn Header="Extension Version" Binding="{Binding ExtVersion}" CanUserSort="False"/>
+                            <DataGridTextColumn Header="Download Size (MB)" Binding="{Binding ZipSize}" CanUserSort="False"/>
+                            <DataGridTemplateColumn Header="Download" CanUserSort="False">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Click="OnDownload">Download</Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Install" CanUserSort="False">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Click="OnInstall">Install</Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="UnInstall" CanUserSort="False">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Click="OnUnInstall">UnInstall</Button>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Downloaded" Binding="{Binding Downloaded}" CanUserSort="False"/>
+                            <DataGridTextColumn Header="Installed" Binding="{Binding Installed}" CanUserSort="False"/>
+                            <DataGridTextColumn Header="Location" Binding="{Binding Location}" CanUserSort="False"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Button x:Name="buttonRefresh" Content="Refresh" Margin="0,0,9,10.4" HorizontalAlignment="Right" Width="88" Height="19" VerticalAlignment="Bottom" Click="OnRefresh" Grid.Column="3"/>
+                    <Label x:Name="label_Copy" Content="Installed Small Basic Version" HorizontalAlignment="Left" Margin="10,42,0,0" Height="26" VerticalAlignment="Top" Grid.ColumnSpan="3"/>
+                    <TextBox x:Name="textBoxSBVersion" Height="23" Margin="24.6,46,9.4,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Grid.ColumnSpan="2" Grid.Column="2"/>
+                    <ProgressBar x:Name="progressBar" Margin="10,0,195,10.4" Height="19" VerticalAlignment="Bottom" Grid.ColumnSpan="4"/>
+                    <Button x:Name="buttonWindowEM" Content="Test EM" Margin="0,0,102,10.4" HorizontalAlignment="Right" Width="88" Height="19" VerticalAlignment="Bottom" Click="OnTestEM" Grid.Column="3"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Extension Database">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="67*"/>
+                        <ColumnDefinition Width="7*"/>
+                        <ColumnDefinition Width="14*"/>
+                        <ColumnDefinition Width="305*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label x:Name="label2" Content="Extension Database Path" HorizontalAlignment="Left" Margin="10,10,0,0" Height="26" VerticalAlignment="Top" Grid.ColumnSpan="3"/>
+                    <TextBox x:Name="textBoxDatabasePath" Height="23" Margin="24.6,14,10.4,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Grid.ColumnSpan="2" Grid.Column="2"/>
+                    <DataGrid x:Name="dataGridDatabases" AutoGenerateColumns="True" ItemsSource="{Binding}" AlternatingRowBackground="#FFF0FAFE" AlternationCount="2" Margin="10,54,9,34.4" Grid.ColumnSpan="4" SelectionUnit="Cell">
+                    </DataGrid>
+                    <Button x:Name="buttonLoadDatabase" Content="Load" Margin="0,0,115,10.4" HorizontalAlignment="Right" Width="88" Height="19" VerticalAlignment="Bottom" Click="OnLoadDatabase" Grid.Column="3"/>
+                    <Button x:Name="buttonSaveDatabase" Content="Save" Margin="0,0,10,10.4" HorizontalAlignment="Right" Width="88" Height="19" VerticalAlignment="Bottom" Click="OnSaveDatabase" Grid.Column="3"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
