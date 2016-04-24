@@ -116,7 +116,7 @@ namespace ExtensionManagerLibrary
             bInitialised = true;
 
             installationPath = "";
-            string settingsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\SBExtensionManager.settings";
+            string settingsPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\SBExtensionManager.settings";
             if (File.Exists(settingsPath))
             {
                 using (StreamReader stream = new StreamReader(settingsPath))
