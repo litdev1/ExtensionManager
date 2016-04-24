@@ -484,7 +484,7 @@ namespace ExtensionManagerLibrary
             string[] files = Directory.GetFiles(installPath + "\\lib");
             foreach (string file in files)
             {
-                if (file.EndsWith(".dll"))
+                if (file.EndsWith(".dll") || file.EndsWith("._dll"))
                 {
                     Extension extension = new Extension();
                     extensions.Add(extension);

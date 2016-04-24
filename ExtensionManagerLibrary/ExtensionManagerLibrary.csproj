@@ -54,7 +54,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EMButton.cs" />
-    <Compile Include="EMengine.cs" />
     <Compile Include="ExtensionList.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -106,9 +105,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\download.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\status.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\extension.png" />

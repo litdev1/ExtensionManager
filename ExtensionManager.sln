@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtensionManager", "ExtensionManager\ExtensionManager.csproj", "{C2E83EAC-8D72-4E63-88AF-9E837149A14E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtensionManagerLibrary", "ExtensionManagerLibrary\ExtensionManagerLibrary.csproj", "{BF5DAB76-57EB-4CCF-B17B-A15616EC600F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SBExtensionManager", "SBExtensionManager\SBExtensionManager.csproj", "{0B898662-7EED-4D2B-AABB-1D36A7617154}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{BF5DAB76-57EB-4CCF-B17B-A15616EC600F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF5DAB76-57EB-4CCF-B17B-A15616EC600F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF5DAB76-57EB-4CCF-B17B-A15616EC600F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B898662-7EED-4D2B-AABB-1D36A7617154}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B898662-7EED-4D2B-AABB-1D36A7617154}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B898662-7EED-4D2B-AABB-1D36A7617154}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B898662-7EED-4D2B-AABB-1D36A7617154}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

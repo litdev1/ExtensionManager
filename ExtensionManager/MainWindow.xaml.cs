@@ -161,7 +161,9 @@ namespace ExtensionManager
             textBoxSBVersion.Text = smallBasicLibrary.ExtVersion.ToString();
             textBoxSBVersion.IsReadOnly = true;
 
-            textBoxDatabasePath.Text = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\SmallBasicDatabase.xml";
+            string databasePath = "C:\\Users\\Steve\\Documents\\LitDev\\extensions\\ExtensionDatabase.xml";
+            if (!File.Exists(databasePath)) databasePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\ExtensionDatabase.xml";
+            textBoxDatabasePath.Text = databasePath;
             webExtension.Load(textBoxDatabasePath.Text);
 
             dataGridDatabases.ItemsSource = databaseItems;

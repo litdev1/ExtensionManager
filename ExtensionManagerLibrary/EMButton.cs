@@ -13,6 +13,7 @@ namespace ExtensionManagerLibrary
     class EMButton : Button
     {
         public enum eState { NONE, INSTALL, UPDATE, INSTALLED, DISABLED }
+        public enum eOption { INSTALL, UNINSTALL, ENABLE }
         private eState state = eState.NONE;
         public Rectangle bar = new Rectangle();
         private double zipSize = 0;
@@ -21,7 +22,7 @@ namespace ExtensionManagerLibrary
         {
             TextBlock textBlock = new TextBlock();
             this.Content = textBlock;
-            textBlock.Text = extension.Name;
+            textBlock.Text = extension.Name + " (" + (extension.Source == eSource.WEB ? "Web" : "Local") + ")";
             textBlock.Foreground = new SolidColorBrush(Colors.Black);
             textBlock.TextDecorations = null;
             textBlock.FontFamily = new FontFamily("Consolas");
@@ -101,16 +102,19 @@ namespace ExtensionManagerLibrary
             item.IsEnabled = false;
             menu.Items.Add(item);
 
-            item = new MenuItem();
-            item.IsChecked = false;
-            item.Header = "Extension version : " + extension.ExtVersion.ToString();
-            img = new Image();
-            img.Source = EMWindow.GetBitmapImage(Properties.Resources.extension);
-            item.Icon = img;
-            item.Tag = this;
-            item.Name = "ExtVersion";
-            item.IsEnabled = false;
-            menu.Items.Add(item);
+            if (extension.Source == eSource.WEB)
+            {
+                item = new MenuItem();
+                item.IsChecked = false;
+                item.Header = "Latest version : " + extension.ExtVersion.ToString();
+                img = new Image();
+                img.Source = EMWindow.GetBitmapImage(Properties.Resources.extension);
+                item.Icon = img;
+                item.Tag = this;
+                item.Name = "ExtVersion";
+                item.IsEnabled = false;
+                menu.Items.Add(item);
+            }
 
             if (null != extension.InstalledVersion)
             {
@@ -128,11 +132,17 @@ namespace ExtensionManagerLibrary
 
             if (extension.Source == eSource.WEB && null != extension.smallBasicExtension)
             {
-                WebRequest webRequest = HttpWebRequest.Create(extension.smallBasicExtension.ZipLocation);
-                webRequest.Method = "HEAD";
-                WebResponse webResponse = webRequest.GetResponse();
-                zipSize = webResponse.ContentLength;
-                webResponse.Close();
+                try
+                {
+                    WebRequest webRequest = HttpWebRequest.Create(extension.smallBasicExtension.ZipLocation);
+                    webRequest.Method = "HEAD";
+                    WebResponse webResponse = webRequest.GetResponse();
+                    zipSize = webResponse.ContentLength;
+                    webResponse.Close();
+                }
+                catch (Exception ex)
+                {
+                }
 
                 if (extension.smallBasicExtension.Description != "")
                 {
@@ -148,7 +158,7 @@ namespace ExtensionManagerLibrary
                     menu.Items.Add(item);
                 }
 
-                if (null != extension.smallBasicExtension.WebSite)
+                if (null != extension.smallBasicExtension.WebSite && extension.smallBasicExtension.WebSite != "")
                 {
                     item = new MenuItem();
                     item.IsChecked = false;
@@ -161,7 +171,7 @@ namespace ExtensionManagerLibrary
                     menu.Items.Add(item);
                 }
 
-                if (null != extension.smallBasicExtension.API)
+                if (null != extension.smallBasicExtension.API && extension.smallBasicExtension.API != "")
                 {
                     item = new MenuItem();
                     item.IsChecked = false;
@@ -174,7 +184,7 @@ namespace ExtensionManagerLibrary
                     menu.Items.Add(item);
                 }
 
-                if (null != extension.smallBasicExtension.ChangeLog)
+                if (null != extension.smallBasicExtension.ChangeLog && extension.smallBasicExtension.ChangeLog != "")
                 {
                     item = new MenuItem();
                     item.IsChecked = false;
@@ -213,10 +223,11 @@ namespace ExtensionManagerLibrary
                         //this.Background = new SolidColorBrush(Colors.SlateBlue);
                         //textBlock.Foreground = new SolidColorBrush(Colors.MediumBlue);
                         //textBlock.TextDecorations = TextDecorations.Underline;
-                        ((MenuItem)this.ContextMenu.Items[0]).Header = "Install";
-                        ((MenuItem)this.ContextMenu.Items[0]).IsEnabled = true;
-                        ((MenuItem)this.ContextMenu.Items[1]).IsEnabled = false;
-                        ((MenuItem)this.ContextMenu.Items[2]).IsEnabled = false;
+                        ((MenuItem)this.ContextMenu.Items[(int)eOption.INSTALL]).Header = "Install (" + string.Format("{0:0.###}", zipSize / 1024.0 / 1024.0) + " MB download)";
+                        //((MenuItem)this.ContextMenu.Items[(int)eOption.INSTALL]).Header = "Install";
+                        ((MenuItem)this.ContextMenu.Items[(int)eOption.INSTALL]).IsEnabled = true;
+                        ((MenuItem)this.ContextMenu.Items[(int)eOption.UNINSTALL]).IsEnabled = false;
+                        ((MenuItem)this.ContextMenu.Items[(int)eOption.ENABLE]).IsEnabled = false;
                         bar.Fill = new SolidColorBrush(Colors.MediumSlateBlue);
                         ((ToolTip)this.ToolTip).Content = "Click to install";
                     }
@@ -227,10 +238,11 @@ namespace ExtensionManagerLibrary
                         //this.Background = new SolidColorBrush(Colors.Orchid);
                         //textBlock.Foreground = new SolidColorBrush(Colors.MediumBlue);
                         //textBlock.TextDecorations = TextDecorations.Underline;
-                        ((MenuItem)this.ContextMenu.Items[0]).Header = "Update (" + string.Format("{0:0.###}", zipSize / 1024.0 / 1024.0) + " MB download)";
-                        ((MenuItem)this.ContextMenu.Items[0]).IsEnabled = true; //Install
-                        ((MenuItem)this.ContextMenu.Items[1]).IsEnabled = true; //Uninstall
-                        ((MenuItem)this.ContextMenu.Items[2]).IsEnabled = false; //Enable-disable
+                        ((MenuItem)this.ContextMenu.Items[(int)eOption.INSTALL]).Header = "Update (" + string.Format("{0:0.###}", zipSize / 1024.0 / 1024.0) + " MB download)";
+                        //((MenuItem)this.ContextMenu.Items[(int)eOption.INSTALL]).Header = "Update";
+                        ((MenuItem)this.ContextMenu.Items[(int)eOption.INSTALL]).IsEnabled = true;
+                        ((MenuItem)this.ContextMenu.Items[(int)eOption.UNINSTALL]).IsEnabled = true;
+                        ((MenuItem)this.ContextMenu.Items[(int)eOption.ENABLE]).IsEnabled = true;
                         bar.Fill = new SolidColorBrush(Colors.Orchid);
                         ((ToolTip)this.ToolTip).Content = "Click to update";
                     }
@@ -241,10 +253,10 @@ namespace ExtensionManagerLibrary
                         //this.Background = new SolidColorBrush(Colors.SpringGreen);
                         //textBlock.Foreground = new SolidColorBrush(Colors.Black);
                         //textBlock.TextDecorations = null;
-                        ((MenuItem)this.ContextMenu.Items[0]).Header = "Installed and enabled";
-                        ((MenuItem)this.ContextMenu.Items[0]).IsEnabled = false;
-                        ((MenuItem)this.ContextMenu.Items[1]).IsEnabled = true;
-                        ((MenuItem)this.ContextMenu.Items[2]).IsEnabled = true;
+                        ((MenuItem)this.ContextMenu.Items[(int)eOption.INSTALL]).Header = "Installed and enabled";
+                        ((MenuItem)this.ContextMenu.Items[(int)eOption.INSTALL]).IsEnabled = false;
+                        ((MenuItem)this.ContextMenu.Items[(int)eOption.UNINSTALL]).IsEnabled = true;
+                        ((MenuItem)this.ContextMenu.Items[(int)eOption.ENABLE]).IsEnabled = true;
                         bar.Fill = new SolidColorBrush(Colors.SpringGreen);
                         ((ToolTip)this.ToolTip).Content = "Click to disable";
                     }
@@ -255,10 +267,10 @@ namespace ExtensionManagerLibrary
                         //this.Background = new SolidColorBrush(Colors.Tomato);
                         //textBlock.Foreground = new SolidColorBrush(Colors.Black);
                         //textBlock.TextDecorations = null;
-                        ((MenuItem)this.ContextMenu.Items[0]).Header = "Installed and disabled";
-                        ((MenuItem)this.ContextMenu.Items[0]).IsEnabled = false;
-                        ((MenuItem)this.ContextMenu.Items[1]).IsEnabled = true;
-                        ((MenuItem)this.ContextMenu.Items[2]).IsEnabled = true;
+                        ((MenuItem)this.ContextMenu.Items[(int)eOption.INSTALL]).Header = "Installed and disabled";
+                        ((MenuItem)this.ContextMenu.Items[(int)eOption.INSTALL]).IsEnabled = false;
+                        ((MenuItem)this.ContextMenu.Items[(int)eOption.UNINSTALL]).IsEnabled = true;
+                        ((MenuItem)this.ContextMenu.Items[(int)eOption.ENABLE]).IsEnabled = true;
                         bar.Fill = new SolidColorBrush(Colors.Tomato);
                         ((ToolTip)this.ToolTip).Content = "Click to enable";
                     }

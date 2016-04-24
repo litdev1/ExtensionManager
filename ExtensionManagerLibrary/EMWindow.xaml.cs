@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Input;
 using System.Windows.Shapes;
 using System.Windows.Controls.Primitives;
+using System.Net;
 
 namespace ExtensionManagerLibrary
 {
@@ -40,27 +41,11 @@ namespace ExtensionManagerLibrary
     public partial class EMWindow : Window
     {
         /// <summary>
-        /// Start Extension Manager using default file paths
+        /// Start Extension Manager
         /// </summary>
         public EMWindow()
         {
             InitializeComponent();
-
-            installationPath = Environment.Is64BitOperatingSystem ? "C:\\Program Files (x86)\\Microsoft\\Small Basic" : "C:\\Program Files\\Microsoft\\Small Basic";
-            databasePath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\SmallBasicDatabase.xml";
-        }
-
-        /// <summary>
-        /// Start Extension Manager with specified file paths
-        /// </summary>
-        /// <param name="installationPath">The Small Basic installation folder path</param>
-        /// <param name="databasePath">The full path to the Extension database xml</param>
-        public EMWindow(string installationPath, string databasePath)
-        {
-            InitializeComponent();
-
-            this.installationPath = installationPath;
-            this.databasePath = databasePath;
         }
 
         private string installationPath = "";
@@ -75,15 +60,78 @@ namespace ExtensionManagerLibrary
         private Timer timer;
         private List<EMButton> EMButtons = new List<EMButton>();
         private Ellipse help = new Ellipse();
+        private bool bInitialised = false;
+        private TextBox tbInitialise;
+
+        /// <summary>
+        /// Download database of extensions
+        /// </summary>
+        private int UpdateDatabase()
+        {
+            FileInfo fileInf = new FileInfo(databasePath);
+            int iValid = -1;
+            try
+            {
+                if (fileInf.Length > 0) iValid = 1;
+            }
+            catch (Exception ex)
+            {
+            }
+            try
+            {
+                Uri uri = new Uri("http://litdev.co.uk/extensions/ExtensionDatabase.xml");
+                HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
+
+                int bufferSize = 2048;
+                byte[] buffer = new byte[bufferSize];
+
+                WebResponse webResponse = webRequest.GetResponse();
+                Stream stream = webResponse.GetResponseStream();
+                FileStream fs = fileInf.OpenWrite();
+
+                int readCount;
+                do
+                {
+                    readCount = stream.Read(buffer, 0, bufferSize);
+                    fs.Write(buffer, 0, readCount);
+                } while (readCount > 0);
+                stream.Close();
+                fs.Close();
+                webResponse.Close();
+
+                if (fileInf.Length > 0)  iValid = 0;
+            }
+            catch (Exception ex)
+            {
+                if (iValid >= 0)
+                {
+                    MessageBox.Show("Database could not be downloaded\nUsing a previous existing version\nWeb downloads will not be possible", "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            return iValid;
+        }
 
         private void Initialise()
         {
-            //For some reason icon in class library failing from xaml
-            Icon icon = Properties.Resources.AppIcon;
-            this.Icon = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
-            gridMain.Background = new ImageBrush(GetBitmapImage(Properties.Resources.appworkspace));
-            progressBar.Background = new SolidColorBrush(Colors.Transparent);
-            progressBar.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromArgb(50, 255, 255, 255));
+            bInitialised = true;
+            progressBar.Visibility = Visibility.Visible;
+            tbInitialise.Visibility = Visibility.Hidden;
+
+            installationPath = "";
+            string settingsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\SBExtensionManager.settings";
+            if (File.Exists(settingsPath))
+            {
+                using (StreamReader stream = new StreamReader(settingsPath))
+                {
+                    installationPath = stream.ReadLine();
+                }
+            }
+
+            if (null == installationPath || !Directory.Exists(installationPath))
+            {
+                installationPath = Environment.Is64BitOperatingSystem ? "C:\\Program Files (x86)\\Microsoft\\Small Basic" : "C:\\Program Files\\Microsoft\\Small Basic";
+            }
+            databasePath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\ExtensionDatabase.xml";
 
             if (!Directory.Exists(installationPath + "\\lib"))
             {
@@ -92,9 +140,9 @@ namespace ExtensionManagerLibrary
                 return;
             }
 
-            if (!File.Exists(databasePath))
+            if (UpdateDatabase() < 0)
             {
-                MessageBox.Show(databasePath + " Not found", "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Database could not be downloaded", "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 this.Close();
                 return;
             }
@@ -112,29 +160,25 @@ namespace ExtensionManagerLibrary
             help.MouseEnter += new MouseEventHandler(OnHelpEnter);
             help.MouseLeave += new MouseEventHandler(OnHelpLeave);
             help.Opacity = 0.6;
-            Canvas.SetLeft(help, gridMain.ActualWidth - 50);
-            Canvas.SetTop(help, gridMain.ActualHeight - 82);
-            canvas.Children.Add(help);
+            gridMain.Children.Add(help);
+            help.RenderTransform = new TranslateTransform(gridMain.ActualWidth/2 - 50, gridMain.ActualHeight/2 - 40);
 
             ToolTip tooltip = new ToolTip();
             help.ToolTip = tooltip;
             tooltip.Content = "";
             tooltip.Foreground = new SolidColorBrush(Colors.Black);
-            tooltip.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 200, 220, 255));
+            tooltip.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(100, 255, 255, 255));
             tooltip.BorderThickness = new Thickness(0);
             tooltip.FontSize = 14;
             tooltip.FontFamily = new System.Windows.Media.FontFamily("Consolas");
             ToolTipService.SetInitialShowDelay(help, 0);
             ToolTipService.SetShowDuration(help, 20000);
             ToolTipService.SetHorizontalOffset(help, -275);
-            ToolTipService.SetVerticalOffset(help, -120);
+            ToolTipService.SetVerticalOffset(help, -140);
             ToolTipService.SetPlacement(help, PlacementMode.Right);
             ToolTipService.SetHasDropShadow(help, false);
-            string info = "Small Basic extensions\nallow access to additional\nfunctionality\n\nRight click an extension\nfor more details\n\nExtensions can be installed,\nupdated or enabled/disabled";
+            string info = "Small Basic extensions\nallow access to additional\nfunctionality\n\nRight click an extension\nfor more details\n\nExtensions can be installed,\nuninstalled, updated or\nenabled/disabled";
             tooltip.Content = info;
-
-            timer = new Timer(OnTimer);
-            timer.Change(100, 100);
         }
 
         private void MakeButtons()
@@ -152,15 +196,24 @@ namespace ExtensionManagerLibrary
                     EMButton.eState state = EMButton.eState.INSTALL;
                     foreach (Extension extensionLocal in localExtension.extensions)
                     {
+                        extensionLocal.InstalledVersion = extensionLocal.ExtVersion;
                         // Web and local have the same name - assumed the same extension - we will ignore one of them
                         if (extensionLocal.Name == extensionWeb.Name)
                         {
                             state = EMButton.eState.UPDATE;
+                            extensionWeb.InstalledVersion = extensionLocal.InstalledVersion;
                             // Ignore local (include web) if identical since web has access to download and descriptionn etc
                             if (extensionLocal.ExtVersion == extensionWeb.ExtVersion)
                             {
                                 extensionLocal.SBVersion = null;
-                                state = EMButton.eState.INSTALLED;
+                                if (File.Exists(installationPath + "\\lib\\" + extensionLocal.Name + ".dll"))
+                                {
+                                    state = EMButton.eState.INSTALLED;
+                                }
+                                else
+                                {
+                                    state = EMButton.eState.DISABLED;
+                                }
                             }
                             // Include local (ignore web) if web version is less than local installed
                             else if (IsVersionLess(extensionWeb.ExtVersion, extensionLocal.ExtVersion))
@@ -170,7 +223,11 @@ namespace ExtensionManagerLibrary
                             // Ignore local (include web) if web version is greater than local installed
                             else
                             {
-                                extensionWeb.InstalledVersion = extensionLocal.ExtVersion;
+                                extensionLocal.SBVersion = null;
+                                if (!File.Exists(installationPath + "\\lib\\" + extensionLocal.Name + ".dll"))
+                                {
+                                    state = EMButton.eState.DISABLED;
+                                }
                                 extensionLocal.SBVersion = null;
                             }
                             break;
@@ -193,6 +250,10 @@ namespace ExtensionManagerLibrary
                 {
                     EMButton button = AddButton(extensionLocal, 50, top);
                     button.SetState(EMButton.eState.INSTALLED);
+                    if (!File.Exists(installationPath + "\\lib\\" + extensionLocal.Name + ".dll"))
+                    {
+                        button.SetState(EMButton.eState.DISABLED);
+                    }
                     EMButtons.Add(button);
                     top += 50;
                 }
@@ -302,6 +363,21 @@ namespace ExtensionManagerLibrary
         {
             try
             {
+                if (!bInitialised)
+                {
+                    if (CheckAccess())
+                    {
+                        Initialise();
+                    }
+                    else
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            Initialise();
+                        });
+                    }
+                }
+
                 double progressValue = 0;
                 if (ProgressStats.fullSize > 0) progressValue = 100 * ProgressStats.currentSize / ProgressStats.fullSize;
                 progressValue = Math.Min(100, Math.Max(0, progressValue));
@@ -333,6 +409,12 @@ namespace ExtensionManagerLibrary
             bool bInstall = (bool)((Object[])obj)[2];
             if (null != extension && extension.Source == eSource.WEB)
             {
+                if (button.GetState() == EMButton.eState.DISABLED)
+                {
+                    MessageBox.Show("Enable before installing or uninstalling", "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    bWorking = false;
+                    return;
+                }
                 extension.Errors.Clear();
                 extension.Valid = true;
                 if (bInstall)
@@ -428,6 +510,7 @@ namespace ExtensionManagerLibrary
             }
             else if (null != extension && extension.Source == eSource.LOCAL && !bInstall)
             {
+                if (MessageBox.Show("This will remove a local extension that cannot be reinstalled from this Extension Manager\nOK to proceed?", "Uninstall Local Extension", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
                 string command = "cd \"" + installationPath + "\\lib\"";
                 if (null != extension)
                 {
@@ -519,6 +602,86 @@ namespace ExtensionManagerLibrary
             bWorking = false;
         }
 
+        private void RunDisable(Object obj)
+        {
+            bWorking = true;
+            EMButton button = (EMButton)((Object[])obj)[0];
+            Extension extension = (Extension)((Object[])obj)[1];
+            if (null != extension)
+            {
+                extension.Errors.Clear();
+                extension.Valid = true;
+                string file = installationPath + "\\lib\\" + extension.Name;
+                string command = "cd \"" + installationPath + "\\lib\"";
+                command += " & move /Y \"" + file + ".dll\" \"" + file + "._dll\"";
+                file = installationPath + "\\lib\\" + extension.Name;
+                command += " & move /Y \"" + file + ".xml\" \"" + file + "._xml\"";
+                extension.UACcommand(command);
+                if (CheckAccess())
+                {
+                    button.SetState(EMButton.eState.DISABLED);
+                    GetButtonExtensionLists();
+                    MakeButtons();
+                    SetButtonExtensionLists();
+                }
+                else
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        button.SetState(EMButton.eState.DISABLED);
+                        GetButtonExtensionLists();
+                        MakeButtons();
+                        SetButtonExtensionLists();
+                    });
+                }
+            }
+            bWorking = false;
+        }
+
+        private void RunEnable(Object obj)
+        {
+            bWorking = true;
+            EMButton button = (EMButton)((Object[])obj)[0];
+            Extension extension = (Extension)((Object[])obj)[1];
+            if (null != extension)
+            {
+                extension.Errors.Clear();
+                extension.Valid = true;
+                string file = installationPath + "\\lib\\" + extension.Name;
+                string command = "cd \"" + installationPath + "\\lib\"";
+                command += " & move /Y \"" + file + "._dll\" \"" + file + ".dll\"";
+                file = installationPath + "\\lib\\" + extension.Name;
+                command += " & move /Y \"" + file + "._xml\" \"" + file + ".xml\"";
+                extension.UACcommand(command);
+                if (CheckAccess())
+                {
+                    button.SetState(EMButton.eState.INSTALLED);
+                    foreach (Extension extensionWeb in webExtension.extensions)
+                    {
+                        if (extension.Name == extensionWeb.Name && extension.SBVersion == SBVersion && extension.ExtVersion != extensionWeb.ExtVersion) button.SetState(EMButton.eState.UPDATE);
+                    }
+                    GetButtonExtensionLists();
+                    MakeButtons();
+                    SetButtonExtensionLists();
+                }
+                else
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        button.SetState(EMButton.eState.INSTALLED);
+                        foreach (Extension extensionWeb in webExtension.extensions)
+                        {
+                            if (extension.Name == extensionWeb.Name && extension.SBVersion == SBVersion && extension.ExtVersion != extensionWeb.ExtVersion) button.SetState(EMButton.eState.UPDATE);
+                        }
+                        GetButtonExtensionLists();
+                        MakeButtons();
+                        SetButtonExtensionLists();
+                    });
+                }
+            }
+            bWorking = false;
+        }
+
         private void OnMenuItemClicked(object sender, RoutedEventArgs e)
         {
             MenuItem item = (MenuItem)sender;
@@ -558,8 +721,8 @@ namespace ExtensionManagerLibrary
                     try
                     {
                         if (bWorking) return;
-                        if (button.GetState() == EMButton.eState.INSTALLED) button.SetState(EMButton.eState.DISABLED);
-                        else if (button.GetState() == EMButton.eState.DISABLED) button.SetState(EMButton.eState.INSTALLED);
+                        if (button.GetState() == EMButton.eState.INSTALLED || button.GetState() == EMButton.eState.UPDATE) RunDisable(new Object[] { button, extension });
+                        else if (button.GetState() == EMButton.eState.DISABLED) RunEnable(new Object[] { button, extension });
                     }
                     catch (Exception ex)
                     {
@@ -646,11 +809,15 @@ namespace ExtensionManagerLibrary
                 }
                 else if (button.GetState() == EMButton.eState.INSTALLED)
                 {
-                    button.SetState(EMButton.eState.DISABLED);
+                    Extension extension = (Extension)button.Tag;
+                    thread = new Thread(new ParameterizedThreadStart(RunDisable));
+                    thread.Start(new Object[] { button, extension });
                 }
                 else if (button.GetState() == EMButton.eState.DISABLED)
                 {
-                    button.SetState(EMButton.eState.INSTALLED);
+                    Extension extension = (Extension)button.Tag;
+                    thread = new Thread(new ParameterizedThreadStart(RunEnable));
+                    thread.Start(new Object[] { button, extension });
                 }
             }
             catch (Exception ex)
@@ -675,13 +842,31 @@ namespace ExtensionManagerLibrary
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            Initialise();
+            //For some reason icon in class library failing from xaml
+            Icon icon = Properties.Resources.AppIcon;
+            this.Icon = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            gridMain.Background = new ImageBrush(GetBitmapImage(Properties.Resources.appworkspace));
+            progressBar.Background = new SolidColorBrush(Colors.Transparent);
+            progressBar.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromArgb(50, 255, 255, 255));
+            progressBar.Value = 0;
+            progressBar.Visibility = Visibility.Hidden;
+
+            tbInitialise = new TextBox();
+            tbInitialise.Text = "Loading...";
+            tbInitialise.FontSize = 50;
+            tbInitialise.BorderThickness = new Thickness(0);
+            tbInitialise.Background = new SolidColorBrush(Colors.Transparent);
+            canvas.Children.Add(tbInitialise);
+            Canvas.SetLeft(tbInitialise, gridMain.ActualWidth / 2 - 120);
+            Canvas.SetTop(tbInitialise, gridMain.ActualHeight / 2 - 80);
+
+            timer = new Timer(OnTimer);
+            timer.Change(100, 100);
         }
 
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Canvas.SetLeft(help, gridMain.ActualWidth - 50);
-            Canvas.SetTop(help, gridMain.ActualHeight - 82);
+            help.RenderTransform = new TranslateTransform(gridMain.ActualWidth / 2 - 50, gridMain.ActualHeight / 2 - 40);
         }
     }
 }
