@@ -114,8 +114,6 @@ namespace ExtensionManagerLibrary
         private void Initialise()
         {
             bInitialised = true;
-            progressBar.Visibility = Visibility.Visible;
-            tbInitialise.Visibility = Visibility.Hidden;
 
             installationPath = "";
             string settingsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\SBExtensionManager.settings";
@@ -179,6 +177,9 @@ namespace ExtensionManagerLibrary
             ToolTipService.SetHasDropShadow(help, false);
             string info = "Small Basic extensions\nallow access to additional\nfunctionality\n\nRight click an extension\nfor more details\n\nExtensions can be installed,\nuninstalled, updated or\nenabled/disabled";
             tooltip.Content = info;
+
+            progressBar.Visibility = Visibility.Visible;
+            tbInitialise.Visibility = Visibility.Hidden;
         }
 
         private void MakeButtons()
@@ -454,22 +455,32 @@ namespace ExtensionManagerLibrary
                     {
                         message += Error + "\n";
                     }
-                    MessageBox.Show(message, "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                    try
+                    message += "\nDo you want to continue anyway?";
+                    if (MessageBox.Show(message, "Small Basic Extension Manager Error", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                     {
-                        if (CheckAccess())
-                        {
-                            extension.Unload();
-                        }
-                        else
-                        {
-                            Dispatcher.Invoke(() => { extension.Unload(); });
-                        }
+                        ZipFile zip = ZipFile.Read(extension.LocalZip);
+                        string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/" + extension.Name + "-" + extension.ExtVersion.ToString();
+                        zip.ExtractAll(path, ExtractExistingFileAction.OverwriteSilently);
+                        zip.Dispose();
+                        extension.Valid = true; //We did it anyway
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        MessageBox.Show(ex.Message, "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        try
+                        {
+                            if (CheckAccess())
+                            {
+                                extension.Unload();
+                            }
+                            else
+                            {
+                                Dispatcher.Invoke(() => { extension.Unload(); });
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message, "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
                     }
                 }
                 if (extension.Valid)
@@ -580,22 +591,32 @@ namespace ExtensionManagerLibrary
                     {
                         message += Error + "\n";
                     }
-                    MessageBox.Show(message, "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                    try
+                    message += "\nDo you want to continue anyway?";
+                    if (MessageBox.Show(message, "Small Basic Extension Manager Error", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                     {
-                        if (CheckAccess())
-                        {
-                            extension.Unload();
-                        }
-                        else
-                        {
-                            Dispatcher.Invoke(() => { extension.Unload(); });
-                        }
+                        ZipFile zip = ZipFile.Read(extension.LocalZip);
+                        string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/" + extension.Name + "-" + extension.ExtVersion.ToString();
+                        zip.ExtractAll(path, ExtractExistingFileAction.OverwriteSilently);
+                        zip.Dispose();
+                        extension.Valid = true; //We did it anyway
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        MessageBox.Show(ex.Message, "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        try
+                        {
+                            if (CheckAccess())
+                            {
+                                extension.Unload();
+                            }
+                            else
+                            {
+                                Dispatcher.Invoke(() => { extension.Unload(); });
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message, "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
                     }
                 }
             }

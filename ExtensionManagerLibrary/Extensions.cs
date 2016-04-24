@@ -304,9 +304,9 @@ namespace ExtensionManagerLibrary
         {
             try
             {
-                if (Name != smallBasicExtension.Name) Errors.Add("Name incorrect");
-                if (SBVersion != new Version(smallBasicExtension.SBVersion)) Errors.Add("Small Basic Version incorrect");
-                if (ExtVersion != new Version(smallBasicExtension.ExtVersion)) Errors.Add("Extension Version incorrect");
+                if (Name != smallBasicExtension.Name) Errors.Add("Name incorrect : "+ Name + " (Database) , " + smallBasicExtension.Name + " (Download)");
+                if (SBVersion != new Version(smallBasicExtension.SBVersion)) Errors.Add("Small Basic Version incorrect : " + SBVersion + " (Database) , " + smallBasicExtension.SBVersion + " (Download)");
+                if (ExtVersion != new Version(smallBasicExtension.ExtVersion)) Errors.Add("Extension Version incorrect : " + ExtVersion + " (Database) , " + smallBasicExtension.ExtVersion + " (Download)");
             }
             catch (Exception ex)
             {
