@@ -18,6 +18,7 @@
     <xs:sequence>
       <xs:element name="Name" type="xs:string"/>
       <xs:element name="Description" type="xs:string"/>
+      <xs:element name="Author" type="xs:string"/>
       <xs:element name="WebSite" type="xs:string"/>
       <xs:element name="API" type="xs:string"/>
       <xs:element name="ChangeLog" type="xs:string"/>

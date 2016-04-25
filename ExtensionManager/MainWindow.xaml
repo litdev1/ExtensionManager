@@ -28,6 +28,7 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Extension Name" Binding="{Binding Name}" CanUserSort="False"/>
                             <DataGridTextColumn Header="Description" Binding="{Binding Description}" CanUserSort="False"/>
+                            <DataGridTextColumn Header="Author" Binding="{Binding Description}" CanUserSort="False"/>
                             <DataGridHyperlinkColumn Header="WebSite" Binding="{Binding WebSite}" CanUserSort="False">
                             <DataGridHyperlinkColumn.ElementStyle>
                                 <Style TargetType="TextBlock">

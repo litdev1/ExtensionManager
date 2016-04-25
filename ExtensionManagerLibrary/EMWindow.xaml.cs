@@ -16,6 +16,8 @@ using System.Windows.Input;
 using System.Windows.Shapes;
 using System.Windows.Controls.Primitives;
 using System.Net;
+using System.Security;
+using System.Security.Policy;
 
 namespace ExtensionManagerLibrary
 {
@@ -69,17 +71,11 @@ namespace ExtensionManagerLibrary
         private int UpdateDatabase()
         {
             FileInfo fileInf = new FileInfo(databasePath);
-            int iValid = -1;
-            try
-            {
-                if (fileInf.Length > 0) iValid = 1;
-            }
-            catch (Exception ex)
-            {
-            }
+            int iValid = (fileInf.Exists && fileInf.Length > 0) ? 1 :- 1;
             try
             {
                 Uri uri = new Uri("http://litdev.co.uk/extensions/ExtensionDatabase.xml");
+                WebRequest.DefaultWebProxy.Credentials = CredentialCache.DefaultCredentials;
                 HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
 
                 int bufferSize = 2048;
@@ -99,13 +95,17 @@ namespace ExtensionManagerLibrary
                 fs.Close();
                 webResponse.Close();
 
-                if (fileInf.Length > 0)  iValid = 0;
+                if (fileInf.Exists && fileInf.Length > 0)  iValid = 0;
             }
             catch (Exception ex)
             {
-                if (iValid >= 0)
+                if (iValid < 0)
                 {
-                    MessageBox.Show("Database could not be downloaded\nUsing a previous existing version\nWeb downloads will not be possible", "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Database could not be downloaded\n\n" + ex.Message, "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else
+                {
+                    MessageBox.Show("Database could not be downloaded\n\n" + ex.Message + "\n\nUsing a previous existing version\nWeb downloads will not be possible", "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
             return iValid;
@@ -140,7 +140,6 @@ namespace ExtensionManagerLibrary
 
             if (UpdateDatabase() < 0)
             {
-                MessageBox.Show("Database could not be downloaded", "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 this.Close();
                 return;
             }
@@ -447,6 +446,18 @@ namespace ExtensionManagerLibrary
                         }
                     }
                     extension.UACcommand(command);
+                    if (null != extension && extension.Valid && bInstall)
+                    {
+                        for (int i = 0; i < extension.smallBasicExtension.dllFiles.numFile; i++)
+                        {
+                            string file = extension.LocalUnZipPath + "\\" + extension.smallBasicExtension.dllFiles.Files[i].File;
+                            Zone zone = Zone.CreateFromUrl(file);
+                            if (File.Exists(file) && zone.SecurityZone != SecurityZone.MyComputer)
+                            {
+                                MessageBox.Show(extension.smallBasicExtension.dllFiles.Files[i].File + " is internet blocked", "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            }
+                        }
+                    }
                 }
                 if (bInstall && !extension.Valid)
                 {
@@ -758,6 +769,8 @@ namespace ExtensionManagerLibrary
                     break;
                 case "Description":
                     break;
+                case "Author":
+                    break;
                 case "WebSite":
                     try
                     {
@@ -873,12 +886,12 @@ namespace ExtensionManagerLibrary
             progressBar.Visibility = Visibility.Hidden;
 
             tbInitialise = new TextBox();
-            tbInitialise.Text = "Loading...";
+            tbInitialise.Text = "Downloading Database...";
             tbInitialise.FontSize = 50;
             tbInitialise.BorderThickness = new Thickness(0);
             tbInitialise.Background = new SolidColorBrush(Colors.Transparent);
             canvas.Children.Add(tbInitialise);
-            Canvas.SetLeft(tbInitialise, gridMain.ActualWidth / 2 - 120);
+            Canvas.SetLeft(tbInitialise, gridMain.ActualWidth / 2 - 270);
             Canvas.SetTop(tbInitialise, gridMain.ActualHeight / 2 - 80);
 
             timer = new Timer(OnTimer);

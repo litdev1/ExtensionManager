@@ -101,6 +101,8 @@ namespace ExtensionManagerLibrary.Schema {
         
         private string descriptionField;
         
+        private string authorField;
+        
         private string webSiteField;
         
         private string aPIField;
@@ -140,6 +142,17 @@ namespace ExtensionManagerLibrary.Schema {
             }
             set {
                 this.descriptionField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(Form=System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string Author {
+            get {
+                return this.authorField;
+            }
+            set {
+                this.authorField = value;
             }
         }
         

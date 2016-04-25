@@ -134,6 +134,7 @@ namespace ExtensionManagerLibrary
             {
                 try
                 {
+                    WebRequest.DefaultWebProxy.Credentials = CredentialCache.DefaultCredentials;
                     WebRequest webRequest = HttpWebRequest.Create(extension.smallBasicExtension.ZipLocation);
                     webRequest.Method = "HEAD";
                     WebResponse webResponse = webRequest.GetResponse();
@@ -144,7 +145,7 @@ namespace ExtensionManagerLibrary
                 {
                 }
 
-                if (extension.smallBasicExtension.Description != "")
+                if (null != extension.smallBasicExtension.Description && extension.smallBasicExtension.Description != "")
                 {
                     item = new MenuItem();
                     item.IsChecked = false;
@@ -154,6 +155,20 @@ namespace ExtensionManagerLibrary
                     item.Icon = img;
                     item.Tag = this;
                     item.Name = "Description";
+                    item.IsEnabled = false;
+                    menu.Items.Add(item);
+                }
+
+                if (null != extension.smallBasicExtension.Author && extension.smallBasicExtension.Author != "")
+                {
+                    item = new MenuItem();
+                    item.IsChecked = false;
+                    item.Header = "Author : " + extension.smallBasicExtension.Author;
+                    img = new Image();
+                    img.Source = EMWindow.GetBitmapImage(Properties.Resources.author);
+                    item.Icon = img;
+                    item.Tag = this;
+                    item.Name = "Author";
                     item.IsEnabled = false;
                     menu.Items.Add(item);
                 }

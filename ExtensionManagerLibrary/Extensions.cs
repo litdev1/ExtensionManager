@@ -195,6 +195,7 @@ namespace ExtensionManagerLibrary
 
                 FileInfo fileInf = new FileInfo(LocalZip);
                 Uri uri = new Uri(smallBasicExtension.ZipLocation);
+                WebRequest.DefaultWebProxy.Credentials = CredentialCache.DefaultCredentials;
                 HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
 
                 int bufferSize = 2048;
@@ -217,7 +218,7 @@ namespace ExtensionManagerLibrary
                 webResponse.Close();
 
                 ProgressStats.currentSize = ProgressStats.fullSize;
-                Downloaded = fileInf.Length > 0;
+                Downloaded = fileInf.Exists && fileInf.Length > 0;
                 if (!Downloaded) Errors.Add("Download extension zip failed");
             }
             catch (Exception ex)

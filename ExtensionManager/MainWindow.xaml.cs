@@ -22,6 +22,7 @@ namespace ExtensionManager
     {
         public string Name { get; set; }
         public string Description { get; set; }
+        public string Author { get; set; }
         public Uri WebSite { get; set; }
         public Uri API { get; set; }
         public Uri ChangeLog { get; set; }
@@ -41,6 +42,7 @@ namespace ExtensionManager
     {
         public string Name { get; set; }
         public string Description { get; set; }
+        public string Author { get; set; }
         public string WebSite { get; set; }
         public string API { get; set; }
         public string ChangeLog { get; set; }
@@ -215,6 +217,7 @@ namespace ExtensionManager
                 {
                     Name = extension.Name,
                     Description = extension.Description,
+                    Author = extension.Author,
                     WebSite = extension.WebSite,
                     API = extension.API,
                     ChangeLog = extension.ChangeLog,
@@ -253,6 +256,7 @@ namespace ExtensionManager
                 index++;
                 extension.Name = item.Name;
                 extension.Description = item.Description;
+                extension.Author = item.Author;
                 extension.WebSite = item.WebSite;
                 extension.API = item.API;
                 extension.ChangeLog = item.ChangeLog;
@@ -299,6 +303,7 @@ namespace ExtensionManager
                 double zipSize = 0;
                 try
                 {
+                    WebRequest.DefaultWebProxy.Credentials = CredentialCache.DefaultCredentials;
                     WebRequest webRequest = HttpWebRequest.Create(extension.smallBasicExtension.ZipLocation);
                     webRequest.Method = "HEAD";
                     WebResponse webResponse = webRequest.GetResponse();
@@ -311,6 +316,7 @@ namespace ExtensionManager
                 {
                     Name = extension.Name,
                     Description = null == extension.smallBasicExtension.Description ? "" : extension.smallBasicExtension.Description,
+                    Author = null == extension.smallBasicExtension.Author ? "" : extension.smallBasicExtension.Author,
                     WebSite = uriWebsite,
                     API = uriAPI,
                     ChangeLog = uriChangeLog,
@@ -337,6 +343,7 @@ namespace ExtensionManager
                 {
                     Name = extension.Name,
                     //Description = "N/A",
+                    //Author = "Unknown",
                     //WebSite = new Uri(""),
                     //API = new Uri(""),
                     //ChangeLog = new Uri(""),
