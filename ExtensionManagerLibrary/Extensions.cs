@@ -8,6 +8,7 @@ using Ionic.Zip;
 using System.Xml.Serialization;
 using ExtensionManagerLibrary.Schema;
 using System.Diagnostics;
+using System.Windows;
 
 namespace ExtensionManagerLibrary
 {
@@ -283,6 +284,19 @@ namespace ExtensionManagerLibrary
                 if (Directory.Exists(LocalUnZipPath)) Directory.Delete(LocalUnZipPath, true);
             }
 
+            string path = Path.GetTempPath() + Name;
+            if (Directory.Exists(path))
+            {
+                try
+                {
+                    Directory.Delete(path, true);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK);
+                }
+            }
+
             Downloaded = false;
         }
 
@@ -432,6 +446,7 @@ namespace ExtensionManagerLibrary
     public class WebExtension
     {
         public List<Extension> extensions = new List<Extension>();
+        public int version = 0;
 
         /// <summary>
         /// Load WEB assemblies from database
@@ -448,6 +463,7 @@ namespace ExtensionManagerLibrary
             Unload();
             extensions.Clear();
 
+            version = extensionList.Version;
             for (int i = 0; i < extensionList.numExtension; i++)
             {
                 extensions.Add(new Extension(extensionList.Extensions[i].Extension));
@@ -455,9 +471,6 @@ namespace ExtensionManagerLibrary
             extensions.Sort();
         }
 
-        /// <summary>
-        /// Unload all WEB assemblies, delete all temp files and free resources
-        /// </summary>
         public void Unload()
         {
             foreach (Extension extension in extensions)

@@ -103,6 +103,16 @@ namespace ExtensionManagerLibrary.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap background {
+            get {
+                object obj = ResourceManager.GetObject("background", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap changeLog {
             get {
                 object obj = ResourceManager.GetObject("changeLog", resourceCulture);
@@ -167,6 +177,79 @@ namespace ExtensionManagerLibrary.Properties {
             get {
                 object obj = ResourceManager.GetObject("install", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IntellisenseEvent {
+            get {
+                object obj = ResourceManager.GetObject("IntellisenseEvent", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IntellisenseMethod {
+            get {
+                object obj = ResourceManager.GetObject("IntellisenseMethod", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IntellisenseObject {
+            get {
+                object obj = ResourceManager.GetObject("IntellisenseObject", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IntellisenseProperty {
+            get {
+                object obj = ResourceManager.GetObject("IntellisenseProperty", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to body {
+        ///    font-family: Segoe UI;
+        ///    font-size: 14px;
+        ///    text-align: center;
+        ///    background-color: #bcf;
+        ///    background-repeat: repeat-y;
+        ///    background-position: center;
+        ///    background-image: url(images/background.png);
+        ///}
+        ///
+        ///#wrapper {
+        ///    width: 800px;
+        ///    margin-right: auto;
+        ///    margin-left: auto;
+        ///    margin-top: 0px;
+        ///    margin-bottom: 0px;
+        ///    padding-left: 40px;
+        ///    padding-right: 40px;
+        ///    padding-top: 0px;
+        ///    padding-bottom: 0px;
+        ///}
+        ///
+        ///#content {
+        ///    padding: 10px;
+        ///    text-ali [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string styleAPI {
+            get {
+                return ResourceManager.GetString("styleAPI", resourceCulture);
             }
         }
         

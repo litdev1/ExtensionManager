@@ -190,12 +190,25 @@ namespace ExtensionManagerLibrary
                 {
                     item = new MenuItem();
                     item.IsChecked = false;
-                    item.Header = "View API documentation";
+                    item.Header = "View author API documentation";
                     img = new Image();
                     img.Source = EMWindow.GetBitmapImage(Properties.Resources.API);
                     item.Icon = img;
                     item.Tag = this;
                     item.Name = "API";
+                    menu.Items.Add(item);
+                }
+
+                if (null != extension.InstalledVersion)
+                {
+                    item = new MenuItem();
+                    item.IsChecked = false;
+                    item.Header = "View generated API documentation";
+                    img = new Image();
+                    img.Source = EMWindow.GetBitmapImage(Properties.Resources.API);
+                    item.Icon = img;
+                    item.Tag = this;
+                    item.Name = "APIgenerated";
                     menu.Items.Add(item);
                 }
 

@@ -149,6 +149,7 @@ namespace ExtensionManagerLibrary
 
             MakeButtons();
             SetButtonExtensionLists();
+            //if (webExtension.version > 0) this.Title += " (Version " + webExtension.version + ")";
 
             help.Width = 32;
             help.Height = 32;
@@ -500,27 +501,17 @@ namespace ExtensionManagerLibrary
                     {
                         if (CheckAccess())
                         {
-                            if (bInstall)
-                                button.SetState(EMButton.eState.INSTALLED);
-                            else
-                            {
-                                GetButtonExtensionLists();
-                                MakeButtons();
-                                SetButtonExtensionLists();
-                            }
+                            GetButtonExtensionLists();
+                            MakeButtons();
+                            SetButtonExtensionLists();
                         }
                         else
                         {
                             Dispatcher.Invoke(() =>
                             {
-                                if (bInstall)
-                                    button.SetState(EMButton.eState.INSTALLED);
-                                else
-                                {
-                                    GetButtonExtensionLists();
-                                    MakeButtons();
-                                    SetButtonExtensionLists();
-                                }
+                                GetButtonExtensionLists();
+                                MakeButtons();
+                                SetButtonExtensionLists();
                             });
                         }
                     }
@@ -797,6 +788,16 @@ namespace ExtensionManagerLibrary
                         MessageBox.Show(ex.Message, "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                     break;
+                case "APIgenerated":
+                    try
+                    {
+                        ShowAPI(extension);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    break;
                 case "ChangeLog":
                     try
                     {
@@ -901,6 +902,17 @@ namespace ExtensionManagerLibrary
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             help.RenderTransform = new TranslateTransform(gridMain.ActualWidth / 2 - 50, gridMain.ActualHeight / 2 - 40);
+        }
+
+        private void ShowAPI(Extension extension)
+        {
+            string xmlFile = installationPath + "\\lib\\" + extension.Name + ".xml";
+            if (File.Exists(xmlFile))
+            {
+                Parser parser = new Parser(xmlFile, extension.Name);
+                string htmlFile = parser.writeHTML(false);
+                Process.Start(htmlFile);
+            }
         }
     }
 }
