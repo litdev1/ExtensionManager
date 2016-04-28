@@ -284,19 +284,6 @@ namespace ExtensionManagerLibrary
                 if (Directory.Exists(LocalUnZipPath)) Directory.Delete(LocalUnZipPath, true);
             }
 
-            string path = Path.GetTempPath() + Name;
-            if (Directory.Exists(path))
-            {
-                try
-                {
-                    Directory.Delete(path, true);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK);
-                }
-            }
-
             Downloaded = false;
         }
 

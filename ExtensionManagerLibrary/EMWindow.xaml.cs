@@ -64,6 +64,8 @@ namespace ExtensionManagerLibrary
         private Ellipse help = new Ellipse();
         private bool bInitialised = false;
         private TextBox tbInitialise;
+        private Dictionary<string, string> settings;
+        private int EMVersion = 1;
 
         /// <summary>
         /// Download database of extensions
@@ -105,7 +107,7 @@ namespace ExtensionManagerLibrary
                 }
                 else
                 {
-                    MessageBox.Show("Database could not be downloaded\n\n" + ex.Message + "\n\nUsing a previous existing version\nWeb downloads will not be possible", "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Database could not be downloaded\n\n" + ex.Message + "\n\nUsing a previous existing version\nWeb downloads will not be possible", "Small Basic Extension Manager Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
             return iValid;
@@ -114,16 +116,10 @@ namespace ExtensionManagerLibrary
         private void Initialise()
         {
             bInitialised = true;
+            this.Title += " (Version " + EMVersion + ")";
 
-            installationPath = "";
-            string settingsPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\SBExtensionManager.settings";
-            if (File.Exists(settingsPath))
-            {
-                using (StreamReader stream = new StreamReader(settingsPath))
-                {
-                    installationPath = stream.ReadLine();
-                }
-            }
+            settings = GetSettings();
+            settings.TryGetValue("sbinstallationpath", out installationPath);
 
             if (null == installationPath || !Directory.Exists(installationPath))
             {
@@ -149,7 +145,13 @@ namespace ExtensionManagerLibrary
 
             MakeButtons();
             SetButtonExtensionLists();
-            //if (webExtension.version > 0) this.Title += " (Version " + webExtension.version + ")";
+            if (webExtension.version > EMVersion)
+            {
+                if (MessageBox.Show("A more recent verion of this Extension Manager is available.\n\nDo yyou want to visit download site?", "Small Basic Extension Manager Information", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                {
+                    Process.Start("https://gallery.technet.microsoft.com/Small-Basic-Extension-e54560ce");
+                }
+            }
 
             help.Width = 32;
             help.Height = 32;
@@ -180,6 +182,27 @@ namespace ExtensionManagerLibrary
 
             progressBar.Visibility = Visibility.Visible;
             tbInitialise.Visibility = Visibility.Hidden;
+        }
+
+        private Dictionary<string,string> GetSettings()
+        {
+            Dictionary<string, string> settings = new Dictionary<string, string>();
+            string settingsPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\SBExtensionManager.settings";
+            if (File.Exists(settingsPath))
+            {
+                using (StreamReader stream = new StreamReader(settingsPath))
+                {
+                    string line = stream.ReadLine();
+                    while (null != line)
+                    {
+                        string[] setting = line.Split(new char[] { '#' });
+                        if (settings.Count == 0 && setting.Length == 1) settings["sbinstallationpath"] = setting[0].Trim();
+                        else if (setting.Length == 2) settings[setting[1].ToLower().Trim()] = setting[0].Trim();
+                        line = stream.ReadLine();
+                    }
+                }
+            }
+            return settings;
         }
 
         private void MakeButtons()
@@ -455,7 +478,7 @@ namespace ExtensionManagerLibrary
                             Zone zone = Zone.CreateFromUrl(file);
                             if (File.Exists(file) && zone.SecurityZone != SecurityZone.MyComputer)
                             {
-                                MessageBox.Show(extension.smallBasicExtension.dllFiles.Files[i].File + " is internet blocked", "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                MessageBox.Show(extension.smallBasicExtension.dllFiles.Files[i].File + " is internet blocked", "Small Basic Extension Manager Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                             }
                         }
                     }
@@ -468,7 +491,7 @@ namespace ExtensionManagerLibrary
                         message += Error + "\n";
                     }
                     message += "\nDo you want to continue anyway?";
-                    if (MessageBox.Show(message, "Small Basic Extension Manager Error", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                    if (MessageBox.Show(message, "Small Basic Extension Manager Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                     {
                         ZipFile zip = ZipFile.Read(extension.LocalZip);
                         string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/" + extension.Name + "-" + extension.ExtVersion.ToString();
@@ -594,7 +617,7 @@ namespace ExtensionManagerLibrary
                         message += Error + "\n";
                     }
                     message += "\nDo you want to continue anyway?";
-                    if (MessageBox.Show(message, "Small Basic Extension Manager Error", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                    if (MessageBox.Show(message, "Small Basic Extension Manager Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                     {
                         ZipFile zip = ZipFile.Read(extension.LocalZip);
                         string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/" + extension.Name + "-" + extension.ExtVersion.ToString();
@@ -873,6 +896,20 @@ namespace ExtensionManagerLibrary
 
             webExtension.Unload();
             localExtension.Unload();
+
+            string path = System.IO.Path.GetTempPath() + "SBExtension_API";
+            if (Directory.Exists(path))
+            {
+                try
+                {
+                    Directory.Delete(path, true);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Small Basic Extension Manager Error", MessageBoxButton.OK);
+                }
+            }
+
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

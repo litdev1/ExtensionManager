@@ -89,7 +89,7 @@ namespace ExtensionManagerLibrary
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK);
+                MessageBox.Show(e.Message, "Small Basic Extension Manager Error", MessageBoxButton.OK);
                 reader = null;
             }
             groups = Parse();
@@ -97,63 +97,63 @@ namespace ExtensionManagerLibrary
 
         public string writeHTML(bool bSeparateFiles)
         {
-            string path = Path.GetTempPath() + extName + "\\";
-            string htmlFile = path + extName + ".html";
+            string path = Path.GetTempPath() + "SBExtension_API";
+            string htmlFile = path + "\\" + extName + ".html";
 
             try
             {
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
+
+                    string css = Properties.Resources.styleAPI;
+                    StreamWriter sw = getStreamWriter(path + "\\styleAPI.css", Encoding.ASCII);
+                    if (null == sw) return null;
+                    sw.WriteLine(css);
+                    sw.Close();
+
+                    if (!Directory.Exists(path + "\\images"))
+                    {
+                        Directory.CreateDirectory(path + "\\images");
+                    }
+                    System.Drawing.Bitmap dImg;
+                    System.Drawing.Icon dIcon;
+                    FileStream fs;
+
+                    dImg = Properties.Resources.background;
+                    fs = new FileStream(path + "\\images\\background.png", FileMode.Create);
+                    dImg.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
+                    fs.Close();
+
+                    dImg = Properties.Resources.IntellisenseEvent;
+                    fs = new FileStream(path + "\\images\\IntellisenseEvent.png", FileMode.Create);
+                    dImg.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
+                    fs.Close();
+
+                    dImg = Properties.Resources.IntellisenseMethod;
+                    fs = new FileStream(path + "\\images\\IntellisenseMethod.png", FileMode.Create);
+                    dImg.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
+                    fs.Close();
+
+                    dImg = Properties.Resources.IntellisenseObject;
+                    fs = new FileStream(path + "\\images\\IntellisenseObject.png", FileMode.Create);
+                    dImg.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
+                    fs.Close();
+
+                    dImg = Properties.Resources.IntellisenseProperty;
+                    fs = new FileStream(path + "\\images\\IntellisenseProperty.png", FileMode.Create);
+                    dImg.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
+                    fs.Close();
+
+                    dIcon = Properties.Resources.AppIcon;
+                    fs = new FileStream(path + "\\favicon.ico", FileMode.Create);
+                    dIcon.Save(fs);
+                    fs.Close();
                 }
-
-                string css = Properties.Resources.styleAPI;
-                StreamWriter sw = getStreamWriter(path + "\\styleAPI.css", Encoding.ASCII);
-                if (null == sw) return null;
-                sw.WriteLine(css);
-                sw.Close();
-
-                if (!Directory.Exists(path + "\\images"))
-                {
-                    Directory.CreateDirectory(path + "\\images");
-                }
-                System.Drawing.Bitmap dImg;
-                System.Drawing.Icon dIcon;
-                FileStream fs;
-
-                dImg = Properties.Resources.background;
-                fs = new FileStream(path + "\\images\\background.png", FileMode.Create);
-                dImg.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
-                fs.Close();
-
-                dImg = Properties.Resources.IntellisenseEvent;
-                fs = new FileStream(path + "\\images\\IntellisenseEvent.png", FileMode.Create);
-                dImg.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
-                fs.Close();
-
-                dImg = Properties.Resources.IntellisenseMethod;
-                fs = new FileStream(path + "\\images\\IntellisenseMethod.png", FileMode.Create);
-                dImg.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
-                fs.Close();
-
-                dImg = Properties.Resources.IntellisenseObject;
-                fs = new FileStream(path + "\\images\\IntellisenseObject.png", FileMode.Create);
-                dImg.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
-                fs.Close();
-
-                dImg = Properties.Resources.IntellisenseProperty;
-                fs = new FileStream(path + "\\images\\IntellisenseProperty.png", FileMode.Create);
-                dImg.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
-                fs.Close();
-
-                dIcon = Properties.Resources.AppIcon;
-                fs = new FileStream(path + "\\favicon.ico", FileMode.Create);
-                dIcon.Save(fs);
-                fs.Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK);
+                MessageBox.Show(ex.Message, "Small Basic Extension Manager Error", MessageBoxButton.OK);
             }
 
             int nFiles = bSeparateFiles ? groups.Count : 1;
@@ -310,6 +310,7 @@ namespace ExtensionManagerLibrary
                                         else if (member.header.attrib != attribute.None)
                                         {
                                             //if not type and no group then create a dummy group of attribute type
+                                            //TODO better
 
                                             group = new Group();
                                             member.header.attrib = attribute.Type;
@@ -413,6 +414,10 @@ namespace ExtensionManagerLibrary
         private void writeFooter(StreamWriter sw)
         {
             sw.WriteLine("<br />");
+            sw.WriteLine("<div id=\"footer\">");
+            sw.WriteLine("<hr style=\"height: 2px; width: 100%;\" />");
+            //sw.WriteLine("<a style=\"position: relative; float: left;\" href=\"http://free-website-translation.com/\" id=\"ftwtranslation_button\" hreflang=\"en\" title=\"\" style=\"border:0;\"><img src=\"http://free-website-translation.com/img/fwt_button_en.gif\" id=\"ftwtranslation_image\" alt=\"Website Translation Widget\" style=\"border:0;\"/></a> <script type=\"text/javascript\" src=\"http://free-website-translation.com/scripts/fwt.js\" /></script>");
+            sw.WriteLine("</div>");
             sw.WriteLine("</div>");
             sw.WriteLine("</div>");
             sw.WriteLine("</body>");
@@ -479,7 +484,8 @@ namespace ExtensionManagerLibrary
             else if (txt.StartsWith("E:")) header.attrib = attribute.Event;
             else header.attrib = attribute.None;
 
-            if (!txt.Replace(' ','_').ToLower().Contains(extName.Replace(' ', '_').ToLower()) && extName != "SmallBasicLibrary") header.attrib = attribute.None;
+            //TODO better
+            //if (!txt.Replace(' ','_').ToLower().Contains(extName.Replace(' ', '_').ToLower()) && extName != "SmallBasicLibrary") header.attrib = attribute.None;
 
             if (header.attrib != attribute.None)
             {
