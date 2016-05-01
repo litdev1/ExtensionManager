@@ -105,7 +105,7 @@ namespace ExtensionManagerLibrary
             item.IsChecked = false;
             item.Header = "Small Basic version : "+ extension.SBVersion.ToString();
             img = new Image();
-            img.Source = Imaging.CreateBitmapSourceFromHIcon(Properties.Resources.AppIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+            img.Source = Imaging.CreateBitmapSourceFromHIcon(Properties.Resources.SBIcon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
             item.Icon = img;
             item.Tag = this;
             item.Name = "SBVersion";

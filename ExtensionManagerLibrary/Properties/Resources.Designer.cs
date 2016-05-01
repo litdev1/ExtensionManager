@@ -221,6 +221,16 @@ namespace ExtensionManagerLibrary.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon SBIcon {
+            get {
+                object obj = ResourceManager.GetObject("SBIcon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to body {
         ///    font-family: Segoe UI;
         ///    font-size: 14px;

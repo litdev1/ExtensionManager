@@ -146,7 +146,7 @@ namespace ExtensionManagerLibrary
                     dImg.Save(fs, System.Drawing.Imaging.ImageFormat.Png);
                     fs.Close();
 
-                    dIcon = Properties.Resources.AppIcon;
+                    dIcon = Properties.Resources.SBIcon;
                     fs = new FileStream(path + "\\favicon.ico", FileMode.Create);
                     dIcon.Save(fs);
                     fs.Close();
