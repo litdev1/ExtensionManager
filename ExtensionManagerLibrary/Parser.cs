@@ -77,6 +77,7 @@ namespace ExtensionManagerLibrary
         Group group;
         Member member;
         Node node;
+        //Translate translate = new Translate();
 
         public Parser(string xmlFile, string extName)
         {
@@ -343,6 +344,8 @@ namespace ExtensionManagerLibrary
                         node.value = reader.Value;
                         node.value = node.value.Replace("\r\n            ", "\r\n");
                         node.value = node.value.Trim(new char[] { '\r', '\n' });
+                        //TODO - The following is too slow
+                        //node.value = translate.TranslateMethod(node.value, "en-gb", "de-de");
                         break;
                     case XmlNodeType.EndElement:
                         break;

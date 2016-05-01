@@ -50,8 +50,8 @@ namespace ExtensionManagerLibrary
             InitializeComponent();
         }
 
-        private string installationPath = "";
-        private string databasePath = "";
+        public static string installationPath = "";
+        public static string databasePath = "";
 
         private Extension smallBasicLibrary = new Extension();
         private Version SBVersion = new Version("0.0.0.0");
@@ -66,12 +66,15 @@ namespace ExtensionManagerLibrary
         private TextBox tbInitialise;
         private Dictionary<string, string> settings;
         private int EMVersion = 1;
+        private Cursor defaultCursor;
 
         /// <summary>
         /// Download database of extensions
         /// </summary>
         private int UpdateDatabase()
         {
+            bWorking = true;
+
             FileInfo fileInf = new FileInfo(databasePath);
             int iValid = (fileInf.Exists && fileInf.Length > 0) ? 1 :- 1;
             try
@@ -110,6 +113,8 @@ namespace ExtensionManagerLibrary
                     MessageBox.Show("Database could not be downloaded\n\n" + ex.Message + "\n\nUsing a previous existing version\nWeb downloads will not be possible", "Small Basic Extension Manager Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
+
+            bWorking = false;
             return iValid;
         }
 
@@ -391,13 +396,17 @@ namespace ExtensionManagerLibrary
                 {
                     if (CheckAccess())
                     {
+                        Cursor = Cursors.Wait;
                         Initialise();
+                        Cursor = defaultCursor;
                     }
                     else
                     {
                         Dispatcher.Invoke(() =>
                         {
+                            Cursor = Cursors.Wait;
                             Initialise();
+                            Cursor = defaultCursor;
                         });
                     }
                 }
@@ -407,6 +416,7 @@ namespace ExtensionManagerLibrary
                 progressValue = Math.Min(100, Math.Max(0, progressValue));
                 if (CheckAccess())
                 {
+                    Cursor = bWorking ? Cursors.Wait : defaultCursor;
                     progressBar.Value = progressValue;
                     if (progressValue == 100)
                     {
@@ -415,7 +425,10 @@ namespace ExtensionManagerLibrary
                 }
                 else
                 {
-                    Dispatcher.Invoke(() => { progressBar.Value = progressValue; });
+                    Dispatcher.Invoke(() => {
+                        Cursor = bWorking ? Cursors.Wait : defaultCursor;
+                        progressBar.Value = progressValue;
+                    });
                     if (progressValue == 100)
                     {
                         ProgressStats.currentSize = 0;
@@ -733,6 +746,7 @@ namespace ExtensionManagerLibrary
             MenuItem item = (MenuItem)sender;
             EMButton button = (EMButton)item.Tag;
             Extension extension = (Extension)button.Tag;
+
             switch (item.Name)
             {
                 case "Install":
@@ -922,6 +936,8 @@ namespace ExtensionManagerLibrary
             progressBar.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromArgb(50, 255, 255, 255));
             progressBar.Value = 0;
             progressBar.Visibility = Visibility.Hidden;
+
+            defaultCursor = Cursor;
 
             tbInitialise = new TextBox();
             tbInitialise.Text = "Downloading Database...";

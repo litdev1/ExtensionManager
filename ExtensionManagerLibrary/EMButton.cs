@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,7 +22,6 @@ namespace ExtensionManagerLibrary
         public EMButton(Extension extension)
         {
             TextBlock textBlock = new TextBlock();
-            this.Content = textBlock;
             textBlock.Text = extension.Name + " (" + (extension.Source == eSource.WEB ? "Web" : "Local") + ")";
             textBlock.Foreground = new SolidColorBrush(Colors.Black);
             textBlock.TextDecorations = null;
@@ -31,6 +31,16 @@ namespace ExtensionManagerLibrary
 
             Size size = new Size(double.MaxValue, double.MaxValue);
             textBlock.Measure(size);
+
+            //Border border = new Border();
+            //border.Child = textBlock;
+            //border.CornerRadius = new CornerRadius(10);
+            //border.Width = 30 + textBlock.DesiredSize.Width;
+            //border.Height = 30;
+            //border.Background = new SolidColorBrush(Color.FromArgb(100, 255, 255, 255));
+
+            this.Content = textBlock;
+
             this.Width = 30 + textBlock.DesiredSize.Width;
             this.Height = 30;
             this.Tag = extension;
@@ -198,8 +208,12 @@ namespace ExtensionManagerLibrary
                     item.Name = "API";
                     menu.Items.Add(item);
                 }
+            }
 
-                if (null != extension.InstalledVersion)
+            if (null != extension.InstalledVersion)
+            {
+                string xmlFile = EMWindow.installationPath + "\\lib\\" + extension.Name + ".xml";
+                if (File.Exists(xmlFile))
                 {
                     item = new MenuItem();
                     item.IsChecked = false;
@@ -211,7 +225,10 @@ namespace ExtensionManagerLibrary
                     item.Name = "APIgenerated";
                     menu.Items.Add(item);
                 }
+            }
 
+            if (extension.Source == eSource.WEB && null != extension.smallBasicExtension)
+            {
                 if (null != extension.smallBasicExtension.ChangeLog && extension.smallBasicExtension.ChangeLog != "")
                 {
                     item = new MenuItem();
@@ -243,11 +260,12 @@ namespace ExtensionManagerLibrary
         public void SetState(eState state)
         {
             this.state = state;
+            //TextBlock textBlock = (TextBlock)((Border)this.Content).Child;
+            TextBlock textBlock = (TextBlock)(this.Content);
             switch (state)
             {
                 case eState.INSTALL:
                     {
-                        TextBlock textBlock = (TextBlock)(this.Content);
                         //this.Background = new SolidColorBrush(Colors.SlateBlue);
                         //textBlock.Foreground = new SolidColorBrush(Colors.MediumBlue);
                         //textBlock.TextDecorations = TextDecorations.Underline;
@@ -262,7 +280,6 @@ namespace ExtensionManagerLibrary
                     break;
                 case eState.UPDATE:
                     {
-                        TextBlock textBlock = (TextBlock)(this.Content);
                         //this.Background = new SolidColorBrush(Colors.Orchid);
                         //textBlock.Foreground = new SolidColorBrush(Colors.MediumBlue);
                         //textBlock.TextDecorations = TextDecorations.Underline;
@@ -277,7 +294,6 @@ namespace ExtensionManagerLibrary
                     break;
                 case eState.INSTALLED:
                     {
-                        TextBlock textBlock = (TextBlock)(this.Content);
                         //this.Background = new SolidColorBrush(Colors.SpringGreen);
                         //textBlock.Foreground = new SolidColorBrush(Colors.Black);
                         //textBlock.TextDecorations = null;
@@ -291,7 +307,6 @@ namespace ExtensionManagerLibrary
                     break;
                 case eState.DISABLED:
                     {
-                        TextBlock textBlock = (TextBlock)(this.Content);
                         //this.Background = new SolidColorBrush(Colors.Tomato);
                         //textBlock.Foreground = new SolidColorBrush(Colors.Black);
                         //textBlock.TextDecorations = null;
