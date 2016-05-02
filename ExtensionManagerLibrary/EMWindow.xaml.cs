@@ -64,7 +64,6 @@ namespace ExtensionManagerLibrary
         private Ellipse help = new Ellipse();
         private bool bInitialised = false;
         private TextBox tbInitialise;
-        private Dictionary<string, string> settings;
         private int EMVersion = 1;
         private Cursor defaultCursor;
 
@@ -123,13 +122,13 @@ namespace ExtensionManagerLibrary
             bInitialised = true;
             this.Title += " (Version " + EMVersion + ")";
 
-            settings = GetSettings();
-            settings.TryGetValue("sbinstallationpath", out installationPath);
-
+            installationPath = Settings.GetValue("SBINSTALLATIONPATH");
             if (null == installationPath || !Directory.Exists(installationPath))
             {
                 installationPath = Environment.Is64BitOperatingSystem ? "C:\\Program Files (x86)\\Microsoft\\Small Basic" : "C:\\Program Files\\Microsoft\\Small Basic";
             }
+            installationPath.Trim(new char[] { '\\' });
+
             databasePath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\ExtensionDatabase.xml";
 
             if (!Directory.Exists(installationPath + "\\lib"))
@@ -187,27 +186,6 @@ namespace ExtensionManagerLibrary
 
             progressBar.Visibility = Visibility.Visible;
             tbInitialise.Visibility = Visibility.Hidden;
-        }
-
-        private Dictionary<string,string> GetSettings()
-        {
-            Dictionary<string, string> settings = new Dictionary<string, string>();
-            string settingsPath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\SBExtensionManager.settings";
-            if (File.Exists(settingsPath))
-            {
-                using (StreamReader stream = new StreamReader(settingsPath))
-                {
-                    string line = stream.ReadLine();
-                    while (null != line)
-                    {
-                        string[] setting = line.Split(new char[] { '#' });
-                        if (settings.Count == 0 && setting.Length == 1) settings["sbinstallationpath"] = setting[0].Trim();
-                        else if (setting.Length == 2) settings[setting[1].ToLower().Trim()] = setting[0].Trim();
-                        line = stream.ReadLine();
-                    }
-                }
-            }
-            return settings;
         }
 
         private void MakeButtons()

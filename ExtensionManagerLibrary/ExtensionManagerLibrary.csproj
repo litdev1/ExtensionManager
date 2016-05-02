@@ -71,6 +71,7 @@
     <Compile Include="EMWindow.xaml.cs">
       <DependentUpon>EMWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="EMWindow.xaml">
