@@ -301,16 +301,22 @@ namespace ExtensionManager
                 Uri.TryCreate(extension.smallBasicExtension.ChangeLog, UriKind.RelativeOrAbsolute, out uriChangeLog);
 
                 double zipSize = 0;
-                try
+                if (EMWindow.bWebAccess)
                 {
-                    WebRequest.DefaultWebProxy.Credentials = CredentialCache.DefaultCredentials;
-                    WebRequest webRequest = HttpWebRequest.Create(extension.smallBasicExtension.ZipLocation);
-                    webRequest.Method = "HEAD";
-                    WebResponse webResponse = webRequest.GetResponse();
-                    zipSize = webResponse.ContentLength;
-                    webResponse.Close();
+                    try
+                    {
+                        WebRequest.DefaultWebProxy.Credentials = CredentialCache.DefaultCredentials;
+                        WebRequest webRequest = HttpWebRequest.Create(extension.smallBasicExtension.ZipLocation);
+                        webRequest.Method = "HEAD";
+                        WebResponse webResponse = webRequest.GetResponse();
+                        zipSize = webResponse.ContentLength;
+                        webResponse.Close();
+                    }
+                    catch
+                    {
+                        EMWindow.bWebAccess = false;
+                    }
                 }
-                catch { }
 
                 ExtensionItem rowItem = new ExtensionItem
                 {

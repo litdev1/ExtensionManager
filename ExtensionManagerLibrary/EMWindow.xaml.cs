@@ -52,6 +52,7 @@ namespace ExtensionManagerLibrary
 
         public static string installationPath = "";
         public static string databasePath = "";
+        public static bool bWebAccess = true;
 
         private Extension smallBasicLibrary = new Extension();
         private Version SBVersion = new Version("0.0.0.0");
@@ -109,6 +110,7 @@ namespace ExtensionManagerLibrary
                 }
                 else
                 {
+                    bWebAccess = false;
                     MessageBox.Show("Database could not be downloaded\n\n" + ex.Message + "\n\nUsing a previous existing version\nWeb downloads will not be possible", "Small Basic Extension Manager Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }

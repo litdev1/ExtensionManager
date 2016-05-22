@@ -142,17 +142,21 @@ namespace ExtensionManagerLibrary
 
             if (extension.Source == eSource.WEB && null != extension.smallBasicExtension)
             {
-                try
+                if (EMWindow.bWebAccess)
                 {
-                    WebRequest.DefaultWebProxy.Credentials = CredentialCache.DefaultCredentials;
-                    WebRequest webRequest = HttpWebRequest.Create(extension.smallBasicExtension.ZipLocation);
-                    webRequest.Method = "HEAD";
-                    WebResponse webResponse = webRequest.GetResponse();
-                    zipSize = webResponse.ContentLength;
-                    webResponse.Close();
-                }
-                catch (Exception ex)
-                {
+                    try
+                    {
+                        WebRequest.DefaultWebProxy.Credentials = CredentialCache.DefaultCredentials;
+                        WebRequest webRequest = HttpWebRequest.Create(extension.smallBasicExtension.ZipLocation);
+                        webRequest.Method = "HEAD";
+                        WebResponse webResponse = webRequest.GetResponse();
+                        zipSize = webResponse.ContentLength;
+                        webResponse.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        EMWindow.bWebAccess = false;
+                    }
                 }
 
                 if (null != extension.smallBasicExtension.Description && extension.smallBasicExtension.Description != "")
@@ -271,7 +275,7 @@ namespace ExtensionManagerLibrary
                         //textBlock.TextDecorations = TextDecorations.Underline;
                         ((MenuItem)this.ContextMenu.Items[(int)eOption.INSTALL]).Header = "Install (" + string.Format("{0:0.###}", zipSize / 1024.0 / 1024.0) + " MB download)";
                         //((MenuItem)this.ContextMenu.Items[(int)eOption.INSTALL]).Header = "Install";
-                        ((MenuItem)this.ContextMenu.Items[(int)eOption.INSTALL]).IsEnabled = true;
+                        ((MenuItem)this.ContextMenu.Items[(int)eOption.INSTALL]).IsEnabled = EMWindow.bWebAccess;
                         ((MenuItem)this.ContextMenu.Items[(int)eOption.UNINSTALL]).IsEnabled = false;
                         ((MenuItem)this.ContextMenu.Items[(int)eOption.ENABLE]).IsEnabled = false;
                         bar.Fill = new SolidColorBrush(Colors.MediumSlateBlue);
@@ -285,7 +289,7 @@ namespace ExtensionManagerLibrary
                         //textBlock.TextDecorations = TextDecorations.Underline;
                         ((MenuItem)this.ContextMenu.Items[(int)eOption.INSTALL]).Header = "Update (" + string.Format("{0:0.###}", zipSize / 1024.0 / 1024.0) + " MB download)";
                         //((MenuItem)this.ContextMenu.Items[(int)eOption.INSTALL]).Header = "Update";
-                        ((MenuItem)this.ContextMenu.Items[(int)eOption.INSTALL]).IsEnabled = true;
+                        ((MenuItem)this.ContextMenu.Items[(int)eOption.INSTALL]).IsEnabled = EMWindow.bWebAccess;
                         ((MenuItem)this.ContextMenu.Items[(int)eOption.UNINSTALL]).IsEnabled = true;
                         ((MenuItem)this.ContextMenu.Items[(int)eOption.ENABLE]).IsEnabled = true;
                         bar.Fill = new SolidColorBrush(Colors.Orchid);
