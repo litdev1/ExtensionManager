@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ExtensionManager"
         mc:Ignorable="d"
-        Title="Small Basic Extension Manager" Height="600" Width="1200" Icon="AppIcon.ico" Closing="Window_Closing" Loaded="Window_Loaded">
+        Title="Small Basic Extension Manager" Height="600" Width="1200" Icon="AppIcon.ico" Closing="Window_Closing" Loaded="Window_Loaded" WindowState="Maximized">
     <Grid Margin="0,0,3,10.4">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="341*"/>

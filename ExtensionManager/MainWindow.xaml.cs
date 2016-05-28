@@ -158,6 +158,8 @@ namespace ExtensionManager
 
         private void Initialise()
         {
+            tabControl.SelectedIndex = 1;
+
             textBoxInstallationPath.Text = Environment.Is64BitOperatingSystem ? "C:\\Program Files (x86)\\Microsoft\\Small Basic" : "C:\\Program Files\\Microsoft\\Small Basic";
             smallBasicLibrary.Verify(textBoxInstallationPath.Text + "\\SmallBasicLibrary.dll");
             textBoxSBVersion.Text = smallBasicLibrary.ExtVersion.ToString();

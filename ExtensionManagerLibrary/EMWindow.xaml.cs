@@ -601,6 +601,13 @@ namespace ExtensionManagerLibrary
                     string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/" + extension.Name + "-" + extension.ExtVersion.ToString();
                     zip.ExtractAll(path, ExtractExistingFileAction.OverwriteSilently);
                     zip.Dispose();
+
+                    string message = "Downloaded to "+path;
+                    message += "\n\nDo you want to open this folder?";
+                    if (MessageBox.Show(message, "Small Basic Extension Manager", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                    {
+                        Process.Start(path);
+                    }
                 }
                 else
                 {
