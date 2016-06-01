@@ -11,6 +11,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Xml.Serialization;
 
 namespace ExtensionManager
@@ -171,11 +172,63 @@ namespace ExtensionManager
             webExtension.Load(textBoxDatabasePath.Text);
 
             dataGridDatabases.ItemsSource = databaseItems;
-            dataGridDatabases.CanUserSortColumns = false;
+            //dataGridDatabases.CanUserSortColumns = false;
+
+            ContextMenu menu = new ContextMenu();
+            dataGridDatabases.ContextMenu = menu;
+
+            MenuItem item = new MenuItem();
+            item.Header = "Copy Row(s)";
+            item.Click += new RoutedEventHandler(_CopyRows);
+            menu.Items.Add(item);
+
+            item = new MenuItem();
+            item.Header = "Delete Row(s)";
+            item.Click += new RoutedEventHandler(_DeleteRows);
+            menu.Items.Add(item);
+
             LoadDatabases();
 
             timer = new Timer(OnTimer);
             timer.Change(100, 100);
+        }
+
+        private void _CopyRows(object sender, RoutedEventArgs e)
+        {
+            foreach (DataGridCellInfo info in dataGridDatabases.SelectedCells)
+            {
+                DatabaseItem item = (DatabaseItem)info.Item;
+                DatabaseItem rowItem = new DatabaseItem
+                {
+                    Name = item.Name,
+                    Description = item.Description,
+                    Author = item.Author,
+                    WebSite = item.WebSite,
+                    API = item.API,
+                    ChangeLog = item.ChangeLog,
+                    SBVersion = item.SBVersion,
+                    ExtVersion = item.ExtVersion,
+                    ZipLocation = item.ZipLocation,
+                    dllFiles = item.dllFiles,
+                    xmlFiles = item.xmlFiles,
+                    docFiles = item.docFiles,
+                    sampleFiles = item.sampleFiles
+                };
+                databaseItems.Add(rowItem);
+            }
+        }
+
+        private void _DeleteRows(object sender, RoutedEventArgs e)
+        {
+            List<DatabaseItem> items = new List<DatabaseItem>();
+            foreach (DataGridCellInfo info in dataGridDatabases.SelectedCells)
+            {
+                items.Add((DatabaseItem)info.Item);
+            }
+            foreach (DatabaseItem item in items)
+            {
+                databaseItems.Remove(item);
+            }
         }
 
         private string GetFiles(FileList fileList)
