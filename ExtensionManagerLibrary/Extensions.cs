@@ -192,6 +192,8 @@ namespace ExtensionManagerLibrary
         {
             try
             {
+                LogDownload(smallBasicExtension.Name + " SB Version=" + smallBasicExtension.SBVersion + " Ext Version=" + smallBasicExtension.ExtVersion);
+
                 LocalZip = GetTempFile();
 
                 FileInfo fileInf = new FileInfo(LocalZip);
@@ -419,6 +421,20 @@ namespace ExtensionManagerLibrary
                 folder = Path.Combine(Path.GetTempPath(), "SBExtension" + (SBEnum++).ToString());
             }
             return folder;
+        }
+
+        private void LogDownload(string message)
+        {
+            if (!EMWindow.bWebAccess) return;
+            string url = "http://litdev.co.uk/extensions/server.php?message=" + message;
+            try
+            {
+                WebRequest webRequest = WebRequest.Create(url);
+                WebResponse webResponse = webRequest.GetResponse();
+            }
+            catch (Exception ex)
+            {
+            }
         }
 
         public int CompareTo(object obj)
