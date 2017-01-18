@@ -164,7 +164,7 @@ namespace ExtensionManagerLibrary
         }
 
         /// <summary>
-        /// Get the version of an extension, this is private since it updates Errors
+        /// Get the version of an extension, this is public since it updates Errors
         /// </summary>
         /// <param name="dllFile">The path to the dll, an argument so we can also use it for any test assembly</param>
         /// <returns>The assembly version</returns>
@@ -192,7 +192,7 @@ namespace ExtensionManagerLibrary
         {
             try
             {
-                LogDownload(smallBasicExtension.Name + " SB Version=" + smallBasicExtension.SBVersion + " Ext Version=" + smallBasicExtension.ExtVersion);
+                EMWindow.LogDownload(smallBasicExtension.Name + " SB Version=" + smallBasicExtension.SBVersion + " Ext Version=" + smallBasicExtension.ExtVersion);
 
                 LocalZip = GetTempFile();
 
@@ -421,20 +421,6 @@ namespace ExtensionManagerLibrary
                 folder = Path.Combine(Path.GetTempPath(), "SBExtension" + (SBEnum++).ToString());
             }
             return folder;
-        }
-
-        private void LogDownload(string message)
-        {
-            if (!EMWindow.bWebAccess) return;
-            string url = "http://litdev.co.uk/extensions/server.php?message=" + message;
-            try
-            {
-                WebRequest webRequest = WebRequest.Create(url);
-                WebResponse webResponse = webRequest.GetResponse();
-            }
-            catch (Exception ex)
-            {
-            }
         }
 
         public int CompareTo(object obj)

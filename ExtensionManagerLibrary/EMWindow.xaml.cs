@@ -115,8 +115,24 @@ namespace ExtensionManagerLibrary
                 }
             }
 
+            LogDownload("Database downloaded");
+
             bWorking = false;
             return iValid;
+        }
+
+        public static void LogDownload(string message)
+        {
+            if (!bWebAccess) return;
+            string url = "http://litdev.co.uk/extensions/server.php?message=" + message;
+            try
+            {
+                WebRequest webRequest = WebRequest.Create(url);
+                WebResponse webResponse = webRequest.GetResponse();
+            }
+            catch (Exception ex)
+            {
+            }
         }
 
         private void Initialise()
@@ -153,7 +169,7 @@ namespace ExtensionManagerLibrary
             SetButtonExtensionLists();
             if (webExtension.version > EMVersion)
             {
-                if (MessageBox.Show("A more recent verion of this Extension Manager is available.\n\nDo yyou want to visit download site?", "Small Basic Extension Manager Information", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                if (MessageBox.Show("A more recent verion of this Extension Manager is available.\n\nDo you want to visit download site?", "Small Basic Extension Manager Information", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
                 {
                     Process.Start("https://gallery.technet.microsoft.com/Small-Basic-Extension-e54560ce");
                 }
@@ -665,7 +681,7 @@ namespace ExtensionManagerLibrary
                 extension.UACcommand(command);
                 if (CheckAccess())
                 {
-                    button.SetState(EMButton.eState.DISABLED);
+                    if (extension.Valid) button.SetState(EMButton.eState.DISABLED);
                     GetButtonExtensionLists();
                     MakeButtons();
                     SetButtonExtensionLists();
@@ -674,7 +690,7 @@ namespace ExtensionManagerLibrary
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        button.SetState(EMButton.eState.DISABLED);
+                        if (extension.Valid) button.SetState(EMButton.eState.DISABLED);
                         GetButtonExtensionLists();
                         MakeButtons();
                         SetButtonExtensionLists();
@@ -701,10 +717,13 @@ namespace ExtensionManagerLibrary
                 extension.UACcommand(command);
                 if (CheckAccess())
                 {
-                    button.SetState(EMButton.eState.INSTALLED);
-                    foreach (Extension extensionWeb in webExtension.extensions)
+                    if (extension.Valid)
                     {
-                        if (extension.Name == extensionWeb.Name && extension.SBVersion == SBVersion && extension.ExtVersion != extensionWeb.ExtVersion) button.SetState(EMButton.eState.UPDATE);
+                        button.SetState(EMButton.eState.INSTALLED);
+                        foreach (Extension extensionWeb in webExtension.extensions)
+                        {
+                            if (extension.Name == extensionWeb.Name && extension.SBVersion == SBVersion && extension.ExtVersion != extensionWeb.ExtVersion) button.SetState(EMButton.eState.UPDATE);
+                        }
                     }
                     GetButtonExtensionLists();
                     MakeButtons();
@@ -714,10 +733,13 @@ namespace ExtensionManagerLibrary
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        button.SetState(EMButton.eState.INSTALLED);
-                        foreach (Extension extensionWeb in webExtension.extensions)
+                        if (extension.Valid)
                         {
-                            if (extension.Name == extensionWeb.Name && extension.SBVersion == SBVersion && extension.ExtVersion != extensionWeb.ExtVersion) button.SetState(EMButton.eState.UPDATE);
+                            button.SetState(EMButton.eState.INSTALLED);
+                            foreach (Extension extensionWeb in webExtension.extensions)
+                            {
+                                if (extension.Name == extensionWeb.Name && extension.SBVersion == SBVersion && extension.ExtVersion != extensionWeb.ExtVersion) button.SetState(EMButton.eState.UPDATE);
+                            }
                         }
                         GetButtonExtensionLists();
                         MakeButtons();
