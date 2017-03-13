@@ -57,7 +57,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>8EB007FB6738A89C2C36020E2E074AA7888BBA6D</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>D80797A5621AA063AE4489F5D7451458B4F795DA</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>SBExtensionManager_TemporaryKey.pfx</ManifestKeyFile>
@@ -130,6 +130,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <None Include="SBExtensionManager_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
