@@ -100,6 +100,7 @@ namespace ExtensionManagerLibrary
                 fs.Close();
                 webResponse.Close();
 
+                fileInf = new FileInfo(databasePath);
                 if (fileInf.Exists && fileInf.Length > 0)  iValid = 0;
             }
             catch (Exception ex)
@@ -431,7 +432,9 @@ namespace ExtensionManagerLibrary
                     }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+            }
         }
 
         private void RunInstall(Object obj)
