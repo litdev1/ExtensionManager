@@ -42,11 +42,14 @@ namespace ExtensionManagerLibrary
     /// </summary>
     public partial class EMWindow : Window
     {
+        public static string SettingsPath = "";
+
         /// <summary>
         /// Start Extension Manager
         /// </summary>
-        public EMWindow()
+        public EMWindow(string settingsPath = "")
         {
+            SettingsPath = settingsPath;
             InitializeComponent();
         }
 
