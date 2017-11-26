@@ -47,9 +47,10 @@ namespace ExtensionManagerLibrary
         /// <summary>
         /// Start Extension Manager
         /// </summary>
-        public EMWindow(string settingsPath = "")
+        public EMWindow(string settingsPath = "", string _installationPath = "")
         {
             SettingsPath = settingsPath;
+            installationPath = _installationPath;
             InitializeComponent();
         }
 
@@ -144,7 +145,7 @@ namespace ExtensionManagerLibrary
             bInitialised = true;
             this.Title += " (Version " + EMVersion + ")";
 
-            installationPath = Settings.GetValue("SBINSTALLATIONPATH");
+            if (installationPath == "") installationPath = Settings.GetValue("SBINSTALLATIONPATH");
             if (null == installationPath || !Directory.Exists(installationPath))
             {
                 installationPath = Environment.Is64BitOperatingSystem ? "C:\\Program Files (x86)\\Microsoft\\Small Basic" : "C:\\Program Files\\Microsoft\\Small Basic";
