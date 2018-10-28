@@ -9,6 +9,7 @@ using System.Xml.Serialization;
 using ExtensionManagerLibrary.Schema;
 using System.Diagnostics;
 using System.Windows;
+using System.Runtime.InteropServices;
 
 namespace ExtensionManagerLibrary
 {
@@ -80,6 +81,15 @@ namespace ExtensionManagerLibrary
     /// </summary>
     public class Extension : IComparable
     {
+        [DllImport("kernel32", CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool DeleteFile(string name);
+
+        private bool Unblock(string fileName)
+        {
+            return DeleteFile(fileName + ":Zone.Identifier");
+        }
+
         private static int SBEnum = 1;
 
         /// <summary>
@@ -222,6 +232,7 @@ namespace ExtensionManagerLibrary
 
                 ProgressStats.currentSize = ProgressStats.fullSize;
                 Downloaded = fileInf.Exists && fileInf.Length > 0;
+                if (Downloaded) Unblock(LocalZip);
                 if (!Downloaded) Errors.Add("Download extension zip failed");
             }
             catch (Exception ex)

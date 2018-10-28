@@ -42,11 +42,15 @@ namespace ExtensionManagerLibrary
     /// </summary>
     public partial class EMWindow : Window
     {
+        public static string SettingsPath = "";
+
         /// <summary>
         /// Start Extension Manager
         /// </summary>
-        public EMWindow()
+        public EMWindow(string settingsPath = "", string _installationPath = "")
         {
+            SettingsPath = settingsPath;
+            installationPath = _installationPath;
             InitializeComponent();
         }
 
@@ -100,6 +104,7 @@ namespace ExtensionManagerLibrary
                 fs.Close();
                 webResponse.Close();
 
+                fileInf = new FileInfo(databasePath);
                 if (fileInf.Exists && fileInf.Length > 0)  iValid = 0;
             }
             catch (Exception ex)
@@ -140,7 +145,7 @@ namespace ExtensionManagerLibrary
             bInitialised = true;
             this.Title += " (Version " + EMVersion + ")";
 
-            installationPath = Settings.GetValue("SBINSTALLATIONPATH");
+            if (installationPath == "") installationPath = Settings.GetValue("SBINSTALLATIONPATH");
             if (null == installationPath || !Directory.Exists(installationPath))
             {
                 installationPath = Environment.Is64BitOperatingSystem ? "C:\\Program Files (x86)\\Microsoft\\Small Basic" : "C:\\Program Files\\Microsoft\\Small Basic";
@@ -431,7 +436,9 @@ namespace ExtensionManagerLibrary
                     }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+            }
         }
 
         private void RunInstall(Object obj)

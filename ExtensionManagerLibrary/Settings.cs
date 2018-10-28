@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
@@ -35,19 +36,27 @@ namespace ExtensionManagerLibrary
         private static void Initialise()
         {
             settings = new List<Setting>();
-            string settingsPath = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, "settings");
-            if (File.Exists(settingsPath))
+            try
             {
-                using (StreamReader stream = new StreamReader(settingsPath))
+                string settingsPath = EMWindow.SettingsPath;
+                if (settingsPath == "") settingsPath = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, "settings");
+                if (File.Exists(settingsPath))
                 {
-                    string line = stream.ReadLine();
-                    while (null != line)
+                    using (StreamReader stream = new StreamReader(settingsPath))
                     {
-                        string[] setting = line.Split(new char[] { '#' });
-                        settings.Add(new Setting(setting[1].Trim(), setting[0].Trim()));
-                        line = stream.ReadLine();
+                        string line = stream.ReadLine();
+                        while (null != line)
+                        {
+                            string[] setting = line.Split(new char[] { '#' });
+                            settings.Add(new Setting(setting[1].Trim(), setting[0].Trim()));
+                            line = stream.ReadLine();
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+
             }
         }
 
