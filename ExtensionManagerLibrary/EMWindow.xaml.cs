@@ -83,7 +83,7 @@ namespace ExtensionManagerLibrary
             int iValid = (fileInf.Exists && fileInf.Length > 0) ? 1 :- 1;
             try
             {
-                Uri uri = new Uri("http://litdev.co.uk/extensions/ExtensionDatabase.xml");
+                Uri uri = new Uri("http://litdev.uk/extensions/ExtensionDatabase.xml");
                 WebRequest.DefaultWebProxy.Credentials = CredentialCache.DefaultCredentials;
                 HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
 
@@ -129,7 +129,7 @@ namespace ExtensionManagerLibrary
         public static void LogDownload(string message)
         {
             if (!bWebAccess) return;
-            string url = "http://litdev.co.uk/extensions/server.php?message=" + message;
+            string url = "http://litdev.uk/extensions/server.php?message=" + message;
             try
             {
                 WebRequest webRequest = WebRequest.Create(url);
