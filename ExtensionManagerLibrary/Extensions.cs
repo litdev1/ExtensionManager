@@ -209,6 +209,7 @@ namespace ExtensionManagerLibrary
                 FileInfo fileInf = new FileInfo(LocalZip);
                 Uri uri = new Uri(smallBasicExtension.ZipLocation);
                 WebRequest.DefaultWebProxy.Credentials = CredentialCache.DefaultCredentials;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                 HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(uri);
 
                 int bufferSize = 2048;

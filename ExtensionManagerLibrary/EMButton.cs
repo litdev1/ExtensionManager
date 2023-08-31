@@ -147,6 +147,7 @@ namespace ExtensionManagerLibrary
                     try
                     {
                         WebRequest.DefaultWebProxy.Credentials = CredentialCache.DefaultCredentials;
+                        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                         WebRequest webRequest = HttpWebRequest.Create(extension.smallBasicExtension.ZipLocation);
                         webRequest.Method = "HEAD";
                         WebResponse webResponse = webRequest.GetResponse();
