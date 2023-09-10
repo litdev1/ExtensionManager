@@ -69,7 +69,7 @@ namespace ExtensionManagerLibrary
         private Ellipse help = new Ellipse();
         private bool bInitialised = false;
         private TextBox tbInitialise;
-        private int EMVersion = 1;
+        private int EMVersion = 2;
         private Cursor defaultCursor;
 
         /// <summary>
