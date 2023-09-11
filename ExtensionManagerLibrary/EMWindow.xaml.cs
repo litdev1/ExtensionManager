@@ -106,7 +106,9 @@ namespace ExtensionManagerLibrary
                 webResponse.Close();
 
                 fileInf = new FileInfo(databasePath);
-                if (fileInf.Exists && fileInf.Length > 0)  iValid = 0;
+                if (fileInf.Exists && fileInf.Length > 0) iValid = 0;
+                else MessageBox.Show("Database could not be downloaded or is empty", "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
             }
             catch (Exception ex)
             {
