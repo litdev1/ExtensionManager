@@ -50,6 +50,7 @@ namespace ExtensionManagerLibrary
         /// <returns>true or false</returns>
         public bool IsSmallBasic()
         {
+            if (null == assembly) return false;
             foreach (AssemblyName assemblyName in assembly.GetReferencedAssemblies())
             {
                 if (assemblyName.Name == "SmallBasicLibrary") return true;
@@ -63,6 +64,7 @@ namespace ExtensionManagerLibrary
         /// <returns>The assembly version (major.minor.build.revision)</returns>
         public Version SmallBasicVersion()
         {
+            if (null == assembly) return null;
             foreach (AssemblyName assemblyName in assembly.GetReferencedAssemblies())
             {
                 if (assemblyName.Name == "SmallBasicLibrary") return assemblyName.Version;
