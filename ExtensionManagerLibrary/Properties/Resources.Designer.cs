@@ -19,7 +19,7 @@ namespace ExtensionManagerLibrary.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -235,7 +235,7 @@ namespace ExtensionManagerLibrary.Properties {
         ///    font-family: Segoe UI;
         ///    font-size: 14px;
         ///    text-align: center;
-        ///    background-color: #bcf;
+        ///    background-color: #ddf;
         ///    background-repeat: repeat-y;
         ///    background-position: center;
         ///    background-image: url(images/background.png);
