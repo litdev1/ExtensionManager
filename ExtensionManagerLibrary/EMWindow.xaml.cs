@@ -93,6 +93,7 @@ namespace ExtensionManagerLibrary
 
                 WebResponse webResponse = webRequest.GetResponse();
                 Stream stream = webResponse.GetResponseStream();
+                fileInf.Delete();
                 FileStream fs = fileInf.OpenWrite();
 
                 int readCount;
