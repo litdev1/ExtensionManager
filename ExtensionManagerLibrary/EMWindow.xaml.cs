@@ -156,7 +156,7 @@ namespace ExtensionManagerLibrary
             {
                 installationPath = Environment.Is64BitOperatingSystem ? "C:\\Program Files (x86)\\Microsoft\\Small Basic" : "C:\\Program Files\\Microsoft\\Small Basic";
             }
-            installationPath.Trim(new char[] { '\\' });
+            installationPath.Trim(new char[] { '\\','/' });
 
             databasePath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\ExtensionDatabase.xml";
 
