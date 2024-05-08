@@ -41,7 +41,12 @@ namespace ExtensionManagerLibrary
         /// <param name="path">The full path to the assembly dll</param>
         public void LoadAssembly(string path)
         {
-            assembly = Assembly.Load(AssemblyName.GetAssemblyName(path));
+            //assembly = Assembly.Load(AssemblyName.GetAssemblyName(path));
+            string tempFile = Path.GetTempFileName();
+            File.Delete(tempFile);
+            tempFile = Path.ChangeExtension(tempFile, "sbprime");
+            File.Copy(path, tempFile);
+            assembly = Assembly.LoadFrom(tempFile);
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿using ExtensionManagerLibrary;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,20 @@ namespace SBExtensionManager
         {
             InitializeComponent();
             this.Visibility = Visibility.Hidden;
+
+            try
+            {
+                string tempPath = System.IO.Path.GetTempPath();
+                string[] strings = Directory.GetFiles(tempPath, "*.sbprime");
+                foreach (string file in strings)
+                {
+                    File.Delete(file);
+                }
+            }
+            catch
+            {
+
+            }
 
             EMWindow windowEM = new EMWindow();
             windowEM.ShowDialog();
