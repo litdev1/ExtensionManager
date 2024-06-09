@@ -2,14 +2,16 @@ body {
     font-family: Segoe UI;
     font-size: 14px;
     text-align: center;
-    background-color: #ddf;
+    background-color: #F9F9FB;
+    /*
     background-repeat: repeat-y;
     background-position: center;
     background-image: url(images/background.png);
+    */
 }
 
 #wrapper {
-    width: 800px;
+    width: 1000px;
     margin-right: auto;
     margin-left: auto;
     margin-top: 0px;
@@ -24,7 +26,7 @@ body {
     padding: 10px;
     text-align: justify;
     float: right;
-    width: 780px;
+    width: 980px;
     text-decoration: none;
 }
 
@@ -86,3 +88,4 @@ a {
         border-radius: 4px;
         box-shadow: 0px 0px 4px 4px #aab;
     }
+
