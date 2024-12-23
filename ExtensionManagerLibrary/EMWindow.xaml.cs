@@ -157,14 +157,22 @@ namespace ExtensionManagerLibrary
                 installationPath = Environment.Is64BitOperatingSystem ? "C:\\Program Files (x86)\\Microsoft\\Small Basic" : "C:\\Program Files\\Microsoft\\Small Basic";
             }
             installationPath.Trim(new char[] { '\\','/' });
-
-            databasePath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\ExtensionDatabase.xml";
-
             if (!Directory.Exists(installationPath + "\\lib"))
             {
                 MessageBox.Show(installationPath + "\\lib" + " Not found", "Small Basic Extension Manager Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 this.Close();
                 return;
+            }
+
+            databasePath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\ExtensionDatabase.xml";
+            if (!File.Exists(databasePath))
+            {
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\SB-Prime";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                databasePath = path + "\\ExtensionDatabase.xml";
             }
 
             if (UpdateDatabase() < 0)
