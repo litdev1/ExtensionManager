@@ -165,15 +165,15 @@ namespace ExtensionManagerLibrary
             }
 
             databasePath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\ExtensionDatabase.xml";
-            if (!File.Exists(databasePath))
-            {
-                string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\SB-Prime";
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-                databasePath = path + "\\ExtensionDatabase.xml";
-            }
+            //if (!File.Exists(databasePath))
+            //{
+            //    string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\SB-Prime";
+            //    if (!Directory.Exists(path))
+            //    {
+            //        Directory.CreateDirectory(path);
+            //    }
+            //    databasePath = path + "\\ExtensionDatabase.xml";
+            //}
 
             if (UpdateDatabase() < 0)
             {
